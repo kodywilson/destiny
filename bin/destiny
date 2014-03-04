@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'destiny'
+
+new_game = ARGV.first || "yes"
+
+puts NewGame.new(new_game).game_select
