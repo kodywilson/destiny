@@ -2,6 +2,9 @@
 
 require 'destiny'
 
-new_game = ARGV.first || "yes"
+puts # for formatting
+puts "Welcome to the exciting world of Destiny!"
+puts # for formatting
+puts "Would you like to start a new game?"
 
-puts NewGame.new(new_game).game_select
+puts GameSelect.new.outcome
