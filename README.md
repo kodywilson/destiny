@@ -14,6 +14,6 @@ Destiny is a role playing game featuring two unique classes with character devel
 
 == Copyright
 
-Copyright (c) 2014 kodywilson. See LICENSE.txt for
+Copyright (c) 2014 Kody Wilson. See LICENSE.md for
 further details.
 
