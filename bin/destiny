@@ -2,9 +2,11 @@
 
 require 'destiny'
 
+game_select = "default"
+
 puts # for formatting
 puts "Welcome to the exciting world of Destiny!"
 puts # for formatting
 puts "Would you like to start a new game?"
 
-puts GameSelect.new.outcome
+GameSelect.new.outcome
