@@ -2,11 +2,13 @@
 
 require 'destiny'
 
-game_select = "default"
-
 puts # for formatting
 puts "Welcome to the exciting world of Destiny!"
 puts # for formatting
+puts "Selectable options will normally be enclosed in []'s."
 puts "Would you like to start a new game?"
 
-GameSelect.new.outcome
+player = GameSelect.new.outcome
+
+puts "Prepare ye, #{player.name} for great adventure!"
+puts "Ye are a young #{player.class} with magnificent deeds ahead of ye!"

@@ -3,7 +3,7 @@ require 'destiny'
 describe GameSelect do
   
   it "should ask if the player wants a new game and respond appropriately" do
-    GameSelect.new("no").outcome.should eq "Loading an existing game. Please choose character to play:"
+    GameSelect.new("no").outcome.should eq "Loading the existing game."
   end
   
   it "should ask if the player wants a new game and respond appropriately" do
