@@ -39,10 +39,16 @@ module GameMechanics
 #    end  
   end
 
+  def bar_top
+    "_"*25 + " STATS " + "_"*25
+  end
+  
   def stat_bar name, xp, lvl, coin, cur_hp, cur_mana
-    puts "_"*23 + "   STATS   " + "_"*23
-    puts "Name: #{name} | XP: #{xp} | Lvl: #{lvl} | Coin: #{coin} | HP: #{cur_hp} | Mana: #{cur_mana}"
-    puts "-"*60
+    "Name: #{name} | XP: #{xp} | Lvl: #{lvl} | Coin: #{coin} | HP: #{cur_hp} | Mana: #{cur_mana}"
+  end
+  
+  def bar_low
+    "-"*58
   end
   
 end

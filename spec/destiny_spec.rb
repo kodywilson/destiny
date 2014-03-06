@@ -11,3 +11,19 @@ describe GameSelect do
   end
   
 end
+
+describe GameMechanics do
+  
+  it "should create a top divider bar" do
+    bar_top.should eq "_________________________ STATS _________________________"
+  end
+
+  it "should return the player's stats" do
+    stat_bar("Bagginszz", 50, 1, 3, 4, 24).should eq "Name: Bagginszz | XP: 50 | Lvl: 1 | Coin: 3 | HP: 4 | Mana: 24"
+  end
+
+  it "should create a lower divider bar" do
+    bar_low.should eq "----------------------------------------------------------"
+  end
+  
+end

@@ -17,7 +17,9 @@ class Town
       begin
         load_data
         puts # formatting
-        stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
+        puts bar_top
+        puts stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
+        puts bar_low
         puts # formatting
         puts "Please choose where you will head next:"
         puts "[1]. Ye Old Tavern"
@@ -68,7 +70,9 @@ def choices
       begin
         load_data
         puts # formatting
-        stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
+        puts bar_top
+        puts stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
+        puts bar_low
         puts # formatting
         puts "Now #{@player.name}, what will you do next?"
         puts "[1]. Go deeper into the dungeon."
