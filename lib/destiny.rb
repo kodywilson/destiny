@@ -1,21 +1,14 @@
+require "json"
+require "game_mechanics"
 require "mobs"
 require "places"
 
-def prompt
-  print ">> "
-end
+include GameMechanics
 
 def choose_name
   puts #formatting
   puts "Please enter your new character's name:"
   prompt; gets.chomp
-end
-
-def save_data save_file
-  save_data = [ @player.class, @player.xp, @player.lvl, @player.coin, @player.name ]
-  File.open(save_file, "w") do |file|
-    file.puts save_data
-  end
 end
 
 def read_one_line(file_name, line_number)
@@ -43,12 +36,12 @@ class GameSelect
   end
 
   def outcome
-    save_file = 'lib/save_game.txt'
     if @game_select == "yes"
       # this is purely for rspec
       return "Starting a new game, please answer the following questions:" if @default != "default"
       begin
         puts # formatting
+        puts "_"*50
         puts "Starting a new game, please answer the following questions:"
         puts "Whould you like to play as a knight or wizard?"
         puts "[1]. Knight"
@@ -57,6 +50,7 @@ class GameSelect
       end while not (class_choice == "1" or class_choice == "2")
       begin
         player_name = choose_name
+        puts #formatting
         puts "You have chosen #{player_name} as your character's name. Is this correct?"
         puts "Please enter [yes] to confirm."
         prompt; confirm_name = STDIN.gets.chomp.downcase
@@ -68,8 +62,9 @@ class GameSelect
       end
       # Set player name, write attributes to save file, then return player to binary
       @player.name = "#{player_name}"
-      save_data(save_file)
+      save_data
       # Intro for new players
+      puts #formatting
       puts "Prepare ye, #{@player.name} for great adventure!"
       puts "Ye are a young #{@player.class} with magnificent deeds ahead of ye!"
       puts # formatting
@@ -80,19 +75,7 @@ class GameSelect
       puts # formatting
       puts "Loading the existing game."
       puts # formatting
-      class_choice = File.open(save_file) {|f| f.readline}.chomp
-      if class_choice == "Knight"
-        @player = Knight.new
-      elsif class_choice == "Wizard"
-        @player = Wizard.new
-      end
-      # Retrieve player xp, lvl, coin, and name then return player to binary
-      # Could this be replaced with a hash, maybe in json?
-      @player.xp   = read_one_line(save_file, 2)
-      @player.lvl  = read_one_line(save_file, 3)
-      @player.coin = read_one_line(save_file, 4)
-      @player.name = read_one_line(save_file, 5)
-      @player
+      @player = load_data
     end
   end
   

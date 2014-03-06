@@ -15,6 +15,9 @@ class Town
     move = 0
     until move == "3"
       begin
+        load_data
+        puts # formatting
+        stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
         puts # formatting
         puts "Please choose where you will head next:"
         puts "[1]. Ye Old Tavern"
@@ -30,18 +33,7 @@ class Town
         puts "near a window and after a bowl of hearty soup and a bit of rest, you feel"
         puts "greatly replenished."
         puts # formatting
-        base_class = File.open(save_file) {|f| f.readline}.chomp
-        if base_class == "Knight"
-          @player = Knight.new
-        elsif base_class == "Wizard"
-          @player = Wizard.new
-        end
-        # Retrieve player xp, lvl, coin, and name then return the restored values
-        # Could this be replaced with a hash, maybe in json?
-        @player.xp   = read_one_line(save_file, 2)
-        @player.lvl  = read_one_line(save_file, 3)
-        @player.coin = read_one_line(save_file, 4)
-        @player.name = read_one_line(save_file, 5)
+        load_data
         @player
       when move == "2"
         Dungeon.new.choices
@@ -71,12 +63,14 @@ class Dungeon
   end
   
 def choices
-    save_file = 'lib/save_game.txt'
     move = 0
     until move == "2"
       begin
+        load_data
         puts # formatting
-        puts "Now friend, what will you do next?"
+        stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
+        puts # formatting
+        puts "Now #{@player.name}, what will you do next?"
         puts "[1]. Go deeper into the dungeon."
         puts "[2]. Return to town."
         prompt; move = gets.chomp
@@ -84,8 +78,9 @@ def choices
       case
       when move == "1"
         puts # formatting
-        puts "You walk further into the dark, dank, dirty, dungeon, smirking slightly"
-        puts "at your mad alliteration sk1llz."
+        puts "You walk further into the dark, dank,"
+        puts "dirty, dungeon, smirking slightly"
+        puts "at your mad alliteration skillz."
         puts # formatting
           
       when move == "2"
