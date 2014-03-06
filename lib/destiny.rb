@@ -1,4 +1,5 @@
 require "mobs"
+require "places"
 
 def prompt
   print ">> "
@@ -68,6 +69,10 @@ class GameSelect
       # Set player name, write attributes to save file, then return player to binary
       @player.name = "#{player_name}"
       save_data(save_file)
+      # Intro for new players
+      puts "Prepare ye, #{@player.name} for great adventure!"
+      puts "Ye are a young #{@player.class} with magnificent deeds ahead of ye!"
+      puts # formatting
       @player
     elsif @game_select == "no"
       # for rspec
@@ -82,7 +87,7 @@ class GameSelect
         @player = Wizard.new
       end
       # Retrieve player xp, lvl, coin, and name then return player to binary
-      # This is just terrible! Needs to be replaced with a hash, probably in json
+      # Could this be replaced with a hash, maybe in json?
       @player.xp   = read_one_line(save_file, 2)
       @player.lvl  = read_one_line(save_file, 3)
       @player.coin = read_one_line(save_file, 4)

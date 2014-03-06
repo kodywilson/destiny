@@ -8,6 +8,6 @@ Gem::Specification.new do |s|
   s.email        = 'kodywilson@gmail.com'
   s.homepage     = 'http://rubygems.org/gems/destiny'
   s.license      = 'MIT'
-  s.files        = ["lib/destiny.rb", "lib/mobs.rb", "lib/save_game.txt"]
+  s.files        = ["lib/destiny.rb", "lib/mobs.rb", "lib/save_game.txt", "lib/places.rb"]
   s.executables  = ["destiny"]
 end
