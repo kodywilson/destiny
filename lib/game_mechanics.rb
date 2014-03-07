@@ -1,6 +1,6 @@
 module GameMechanics
   
-  @@save_file = 'lib/save_game.json'
+  @@save_file = '../lib/save_game.json'
   
   def prompt
     print ">> "

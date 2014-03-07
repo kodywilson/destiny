@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+Dir.chdir(File.dirname(__FILE__))
+
 require 'destiny'
 
 puts # formatting
@@ -8,8 +10,12 @@ puts "| Welcome to the exciting world of Destiny! |"
 puts " " + "-"*43
 puts # formatting
 puts "Selectable options will normally be enclosed in []'s."
-puts "Would you like to start a new game?"
-
-GameSelect.new.outcome
+puts # formatting
+if File.exists?('../lib/save_game.json')
+  puts "Would you like to start a new game?"
+  GameSelect.new.outcome
+else
+  GameSelect.new("yes").outcome
+end
 Town.new.choices
 

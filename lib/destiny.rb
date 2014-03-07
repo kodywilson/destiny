@@ -38,7 +38,7 @@ class GameSelect
   def outcome
     if @game_select == "yes"
       # this is purely for rspec
-      return "Starting a new game, please answer the following questions:" if @default != "default"
+#      return "Starting a new game, please answer the following questions:" if @default != "default"
       begin
         puts # formatting
         puts "_"*50
