@@ -26,4 +26,9 @@ describe GameMechanics do
     bar_low.should eq "----------------------------------------------------------"
   end
   
+  it "should return a random number between 1 and # of sides" do
+    digits = 1..20
+    digits.include?(dice(20)).should eq true
+  end
+  
 end

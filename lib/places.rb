@@ -30,13 +30,13 @@ class Town
       case
       when move == "1"
         # Put this in Tavern class???
+        # also Tavern should restore the cur_hp and cur_mana to max values!
         puts # formatting
         puts "You enter the tavern. The air is thick with smoke, but you find a place"
         puts "near a window and after a bowl of hearty soup and a bit of rest, you feel"
         puts "greatly replenished."
         puts # formatting
-        load_data
-        @player
+        restore_player
       when move == "2"
         Dungeon.new.choices
       when move == "3"
@@ -84,9 +84,9 @@ def choices
         puts # formatting
         puts "You walk further into the dark, dank,"
         puts "dirty, dungeon, smirking slightly"
-        puts "at your mad alliteration skillz."
+        puts "at your awesome alliteration ability."
         puts # formatting
-          
+        random_encounter
       when move == "2"
         return
       end

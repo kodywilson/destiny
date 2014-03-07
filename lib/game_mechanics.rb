@@ -8,11 +8,13 @@ module GameMechanics
   
   def save_data
     save_info = {
-      role:   @player.class,
-      xp:     @player.xp,
-      lvl:    @player.lvl,
-      coin:   @player.coin,
-      name:   @player.name
+      role:     @player.class,
+      cur_hp:   @player.cur_hp,
+      cur_mana: @player.cur_mana,
+      xp:       @player.xp,
+      lvl:      @player.lvl,
+      coin:     @player.coin,
+      name:     @player.name
     }
     File.open(@@save_file, "w") do |f|
       f.write(save_info.to_json)
@@ -28,15 +30,23 @@ module GameMechanics
       @player = Wizard.new
     end
     # Set attributes based off information in load_info
-    @player.xp   = load_info['xp']
-    @player.lvl  = load_info['lvl']
-    @player.coin = load_info['coin']
-    @player.name = load_info['name']
+    @player.cur_hp   = load_info['cur_hp']
+    @player.cur_mana = load_info['cur_mana']
+    @player.xp       = load_info['xp']
+    @player.lvl      = load_info['lvl']
+    @player.coin     = load_info['coin']
+    @player.name     = load_info['name']
     @player
     # I was trying to do the above assignments with iteration, there has to be a way!
 #    load_info.each do |attribute, value|
 #      @player.#{attribute} = value unless attribute == "role"
 #    end  
+  end
+
+  def restore_player
+    @player.cur_hp   = @player.hp
+    @player.cur_mana = @player.mana
+    save_data
   end
 
   def bar_top
@@ -49,6 +59,36 @@ module GameMechanics
   
   def bar_low
     "-"*58
+  end
+  
+  def dice(sides=6,&block)
+    if block_given?
+      block.call(rand(1..sides))
+    else
+      rand(1..sides)
+    end
+  end
+
+  def random_encounter
+    chance = dice(20)
+    case
+    when (1..5).include?(chance)
+      puts # formatting
+      puts "You get the feeling you are being watched..."
+      puts # formatting
+    when (6..10).include?(chance)
+      puts #format
+      puts "A small goblin springs from the shadows and attacks!!"
+      puts #format
+    when (11..15).include?(chance)
+      puts #format
+      puts "You hear squeeking sounds. BIG squeeking sounds!"
+      puts #format
+    when (16..20).include?(chance)
+      puts # formatting
+      puts "You step into a puddle of water and angrily lift your boot out."
+      puts # formatting
+    end 
   end
   
 end
