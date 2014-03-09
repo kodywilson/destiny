@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name         = 'destiny'
-  s.version      = '0.0.0'
-  s.date         = '2014-03-03'
+  s.version      = '0.0.2'
+  s.date         = '2014-03-08'
   s.summary      = "text rpg"
   s.description  = "Role playing game with distinct classes and character development"
   s.authors      = ["Kody Wilson"]

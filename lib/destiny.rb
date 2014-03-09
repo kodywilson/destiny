@@ -28,11 +28,7 @@ class GameSelect
     #rspec with user input is more tricky, this allows me to test
     @default = default
     return @game_select = @default if @default != "default"
-    #restrict input to valid answers, but don't worry about case
-    begin
-      puts "Please enter [yes] or [no]:"
-      prompt; @game_select = STDIN.gets.chomp.downcase
-    end while not (@game_select == "yes" or @game_select == "no")
+    yes_no
   end
 
   def outcome

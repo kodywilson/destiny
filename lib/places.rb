@@ -4,14 +4,14 @@
 class Town
   
   def initialize
-    # only available as an option in the Dungeon (to return to)
+    # Town is only available as an option in the Dungeon (to return to)
+    # initialize is only called the first time, so this greeting is only seen once
     puts "These things always start the same way and your adventure is no exception..."
     puts "You walk into town, scanning each nook and cranny. Most faces are friendly,"
     puts "some are not..."
   end
   
   def choices
-    save_file = 'lib/save_game.txt'
     move = 0
     until move == "3"
       begin
@@ -40,8 +40,8 @@ class Town
       when move == "2"
         Dungeon.new.choices
       when move == "3"
-        # This needs to save the players stats before exit
-        # Should probably convert the read from file to restore stats to a module
+        # save the player's stats before exit
+        save_data
         exit
       end
     end
@@ -64,11 +64,11 @@ class Dungeon
     puts "You have entered the dungeon! DUM DUM DUM!!"
   end
   
-def choices
+  def choices
     move = 0
+    load_data
     until move == "2"
       begin
-        load_data
         puts # formatting
         puts bar_top
         puts stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
@@ -82,12 +82,12 @@ def choices
       case
       when move == "1"
         puts # formatting
-        puts "You walk further into the dark, dank,"
-        puts "dirty, dungeon, smirking slightly"
-        puts "at your awesome alliteration ability."
+        puts "You walk further into the dark, dank, dirty, dungeon,"
+        puts "smirking slightly at your awesome alliteration ability."
         puts # formatting
         random_encounter
       when move == "2"
+        save_data
         return
       end
     end

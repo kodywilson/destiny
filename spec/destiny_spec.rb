@@ -16,20 +16,28 @@ end
 describe GameMechanics do
   
   it "should create a top divider bar" do
-    bar_top.should eq "_________________________ STATS _________________________"
+    bar_top.should eq "___________________________ STATS ___________________________"
   end
 
   it "should return the player's stats" do
-    stat_bar("Bagginszz", 50, 1, 3, 4, 24).should eq "Name: Bagginszz | XP: 50 | Lvl: 1 | Coin: 3 | HP: 4 | Mana: 24"
+    stat_bar("Bagginszz", 50, 1, 3, 4, 24).should eq "  Name: Bagginszz | XP: 50 | Lvl: 1 | Coin: 3 | HP: 4 | Mana: 24"
   end
 
   it "should create a lower divider bar" do
-    bar_low.should eq "----------------------------------------------------------"
+    bar_low.should eq "-------------------------------------------------------------"
   end
   
   it "should return a random number between 1 and # of sides" do
     digits = 1..20
     digits.include?(dice(20)).should eq true
+  end
+  
+  describe Town do
+    
+#    it "should welcome you when first entered" do
+#      Town.new.should eq "some are not..."
+#    end  
+  
   end
   
 end
