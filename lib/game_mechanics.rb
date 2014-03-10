@@ -15,6 +15,20 @@ module GameMechanics
   end
   
   def save_data
+    case
+    when (0..1000).include?(@player.xp)
+      @player.lvl = 1
+    when (1001..2500).include?(@player.xp)
+      @player.lvl = 2
+    when (2501..5000).include?(@player.xp)
+      @player.lvl = 3
+    when (5001..8000).include?(@player.xp)
+      @player.lvl = 4
+    when (8001..11500).include?(@player.xp)
+      @player.lvl = 5
+    when (11501..15000).include?(@player.xp)
+      @player.lvl = 6
+    end
     save_info = {
       role:     @player.class,
       cur_hp:   @player.cur_hp,
@@ -37,13 +51,17 @@ module GameMechanics
     elsif role == "Wizard"
       @player = Wizard.new
     end
-    # Set attributes based off information in load_info
-    @player.cur_hp   = load_info['cur_hp']
-    @player.cur_mana = load_info['cur_mana']
-    @player.xp       = load_info['xp']
+    # Set stats based off information in load_info
     @player.lvl      = load_info['lvl']
+    @player.xp       = load_info['xp']   
     @player.coin     = load_info['coin']
     @player.name     = load_info['name']
+    @player.cur_hp   = load_info['cur_hp']
+    @player.cur_mana = load_info['cur_mana']
+    # Adjust stats based off player level
+    @player.hp       = @player.hp*@player.lvl
+    @player.mana     = @player.mana*@player.lvl
+    @player.dmg      = @player.dmg*@player.lvl
     @player
     # I was trying to do the above assignments with iteration, there has to be a way!
 #    load_info.each do |attribute, value|
@@ -70,7 +88,12 @@ module GameMechanics
   end
   
   def combat bad_guy
+    # create an opponent
     @bad_guy = bad_guy.new
+    # scale power of opponent to level of player
+    @bad_guy.cur_hp       = @bad_guy.hp*@player.lvl
+    @bad_guy.cur_mana     = @bad_guy.mana*@player.lvl
+    @bad_guy.dmg      = @bad_guy.dmg*@player.lvl
     puts @bad_guy.name + " says, you kill my father, now you will die!!" unless (@bad_guy.name == "ROUS" or @bad_guy.name == "Skeleton")
     move = 0
     until move == "2"
@@ -91,7 +114,8 @@ module GameMechanics
         if @player.class.to_s == "Knight"
           puts "#{@player.name} swings the mighty sword at the #{@bad_guy.name}."
           puts # formatting
-          @dmg_dlt = dice(@player.dmg)
+          dmg_mod = (@player.str-10)/2 # knights use their str for damage mod
+          @dmg_dlt = dice(@player.dmg) + dmg_mod
         elsif @player.class.to_s == "Wizard"
           begin
             puts "How many magic darts will you shoot?"
@@ -100,13 +124,25 @@ module GameMechanics
             puts "[3]."
           prompt; darts = gets.chomp.to_i
           end while not (darts == 1 or darts == 2 or darts == 3)
+          puts # formatting
           puts "#{@player.name} conjures #{darts} magic darts that zip toward the #{@bad_guy.name}."
-          @dmg_dlt = dice(@player.dmg) + darts # more darts more damage
-          @player.cur_mana = @player.cur_mana - darts # more darts more mana spent
+          dmg_mod = (@player.int-10)/2 # wizards use their int for damage mod
+          @dmg_dlt = dice(@player.dmg) + darts*@player.lvl + dmg_mod# more darts more damage, scales with level
+          @player.cur_mana = @player.cur_mana - darts*@player.lvl # more darts more mana spent, scales with level
         end
-        puts "You deal #{@dmg_dlt} damage to the #{@bad_guy.name}"
-        puts # formatting
-        @bad_guy.cur_hp = @bad_guy.cur_hp - @dmg_dlt
+        miss_chance = dice(100)
+        agi_boost = (@bad_guy.agi-10)*2 + @bad_guy.dodge
+        if (1..agi_boost).include?(miss_chance)
+            puts @bad_guy.name + " jumps out of the way, avoiding being hit by " + @player.name + "!"
+            puts # formatting
+        else
+          @dmg_dlt = @dmg_dlt - @bad_guy.armor/4
+          @dmg_dlt = 0 if @dmg_dlt < 1
+          puts #formatting
+          puts "You deal #{@dmg_dlt} damage to the #{@bad_guy.name}." unless @dmg_dlt < 1
+          puts # formatting
+          @bad_guy.cur_hp = @bad_guy.cur_hp - @dmg_dlt
+        end
         if @bad_guy.cur_hp <= 0
           puts "You have slain the #{@bad_guy.name} and won the day!"
           # rewards for winning the battle!
@@ -117,10 +153,17 @@ module GameMechanics
         else
           puts "#{@bad_guy.name} viciously attacks #{@player.name}!"
           puts # formatting
-          dmg_taken = dice(@bad_guy.dmg)
-          @player.cur_hp = @player.cur_hp - dmg_taken
-          puts "#{@bad_guy.name} hits YOU for #{dmg_taken} damage!"
-          puts "OUCH!"
+          miss_chance = dice(100)
+          agi_boost = (@player.agi-10)*2 + @player.dodge
+          if (1..agi_boost).include?(miss_chance)
+            puts @player.name + " totally leaps out of the way, avoiding being hit by " + @bad_guy.name + "!"
+          else
+            dmg_taken = dice(@bad_guy.dmg) - @player.armor/4
+            dmg_taken = 0 if dmg_taken < 1
+            @player.cur_hp = @player.cur_hp - dmg_taken
+            puts "#{@bad_guy.name} hits YOU for #{dmg_taken} damage!" unless dmg_taken < 1
+            puts "OUCH!" unless dmg_taken < 1
+          end
           puts #formatting
         end
         if @player.cur_hp <= 0
