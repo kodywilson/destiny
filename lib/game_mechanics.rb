@@ -104,7 +104,7 @@ module GameMechanics
     @bad_guy.cur_hp       = @bad_guy.hp*@player.lvl
     @bad_guy.cur_mana     = @bad_guy.mana*@player.lvl
     @bad_guy.dmg      = @bad_guy.dmg*@player.lvl
-    puts @bad_guy.name + " says, you kill my father, now you will die!!" unless (@bad_guy.name == "ROUS" or @bad_guy.name == "Skeleton")
+    puts @bad_guy.name + " says, you kill my father, now you will die!!" unless (@bad_guy.name == "Giant Rat" or @bad_guy.name == "Skeleton")
     move = 0
     until move == "2"
       begin
@@ -130,15 +130,20 @@ module GameMechanics
           begin
             puts "How many magic darts will you shoot?"
             puts "[1]."
-            puts "[2]."
-            puts "[3]."
+            puts "[2]." if @player.cur_mana - 2*@player.lvl >= 0
+            puts "[3]." if @player.cur_mana - 3*@player.lvl >= 0
           prompt; darts = gets.chomp.to_i
+          darts = 4 if darts == 2 and @player.cur_mana - 2*@player.lvl < 0
+          darts = 4 if darts == 3 and @player.cur_mana - 3*@player.lvl < 0
           end while not (darts == 1 or darts == 2 or darts == 3)
           puts # formatting
+          puts "#{@player.name} conjures #{darts} magic dart that zips toward the #{@bad_guy.name}." if darts == 1
           puts "#{@player.name} conjures #{darts} magic darts that zip toward the #{@bad_guy.name}."
           dmg_mod = (@player.int-10)/2 # wizards use their int for damage mod
           @dmg_dlt = dice(@player.dmg) + darts*@player.lvl + dmg_mod# more darts more damage, scales with level
           @player.cur_mana = @player.cur_mana - darts*@player.lvl # more darts more mana spent, scales with level
+          # prevent negative mana, but always allow wizard to shoot at least one dart, no matter what
+          @player.cur_mana = 0 if @player.cur_mana < 0
         end
         miss_chance = dice(100)
         agi_boost = (@bad_guy.agi-10)*2 + @bad_guy.dodge
