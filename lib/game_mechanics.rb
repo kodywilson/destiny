@@ -87,6 +87,16 @@ module GameMechanics
     "-"*61
   end
   
+  def player_croaks
+    puts # formatting
+    puts "It happens to the best of us #{@player.name}."
+    puts "Fortunately for you, the game of Destiny never ends."
+    puts "The game will exit now and you can restart in town."
+    puts # formatting
+    puts "Better luck next time, eh?"
+    exit
+  end
+  
   def combat bad_guy
     # create an opponent
     @bad_guy = bad_guy.new
@@ -169,13 +179,7 @@ module GameMechanics
         if @player.cur_hp <= 0
           puts "You were killed by the #{@bad_guy.name}."
           puts "Killed dead."
-          puts # formatting
-          puts "It happens to the best of us #{@player.name}."
-          puts "Fortunately for you, the game of Destiny never ends."
-          puts "The game will exit now and you can restart in town."
-          puts # formatting
-          puts "Better luck next time, eh?"
-          exit
+          player_croaks
         end
       when move == "2"
         puts # formatting
@@ -184,6 +188,38 @@ module GameMechanics
         puts # formatting
         puts "You shout what is that? and point frantically in the opposite direction."
         puts "The #{@bad_guy.name} turns to look and you high tail it away!"
+        puts # formatting
+        run_away = dice(10)
+        case
+        when (1..8).include?(run_away)
+        # you got away this time
+        puts "You escape from the #{@bad_guy.name} while it foolishly looks away."
+        when (9..10).include?(run_away)
+        # not so lucky this time
+        puts "#{@bad_guy.name} says, do you think I was spawned yesterday?"
+        puts # formatting
+        puts "#{@bad_guy.name} viciously attacks #{@player.name}!"
+        puts # formatting
+        miss_chance = dice(100)
+        agi_boost = (@player.agi-10)*2 + @player.dodge
+        if (1..agi_boost).include?(miss_chance)
+          puts @player.name + " totally leaps out of the way, avoiding being hit by " + @bad_guy.name + "!"
+        else
+          dmg_taken = dice(@bad_guy.dmg) - @player.armor/4
+          dmg_taken = 0 if dmg_taken < 1
+          @player.cur_hp = @player.cur_hp - dmg_taken
+          puts "#{@bad_guy.name} hits YOU for #{dmg_taken} damage!" unless dmg_taken < 1
+          puts "OUCH!" unless dmg_taken < 1
+        end
+        puts #formatting
+        if @player.cur_hp <= 0
+          puts "You knew when to fold em, but the #{@bad_guy.name} got the better of you anyway."
+          player_croaks
+        end
+        puts "You manage to accidentally stick a boot firmly in the #{@bad_guy.name}'s face"
+        puts "allowing you to escape!"
+        puts # formatting
+        end
         save_data
         return
       end
@@ -208,11 +244,12 @@ module GameMechanics
       puts # formatting
     when (3..4).include?(chance)
       puts # formatting
-      puts "You notice a coin stuck in the dirt, pry it loose,"
-      puts "and place the coin in your wallet."
+      puts "You notice a coin stuck in the dirt, pry it"
+      puts "loose, and place the coin in your wallet."
+      puts # formatting
       puts "Today must be your lucky day, #{@player.name}!"
-      @player.xp = @player.xp + 50
-      @player.coin = @player.coin + 1
+      @player.xp = @player.xp + @player.lvl*100
+      @player.coin = @player.coin + @player.lvl*2
       puts # formatting
     when (5..8).include?(chance)
       puts #format
@@ -241,10 +278,15 @@ module GameMechanics
       trip_part = "knee" if trip_event == 1
       trip_part = "elbow" if trip_event == 2
       trip_part = "hands" if trip_event == 3
+      trip_damage = @player.lvl
       puts "You stumble and scrape your #{trip_part}."
-      puts "You take 1 damage."
+      puts "You take #{trip_damage} damage."
       puts # formatting
-      @player.cur_hp = @player.cur_hp - 1
+      @player.cur_hp = @player.cur_hp - trip_damage
+      if @player.cur_hp <= 0
+        puts "You have tripped and died."
+        player_croaks
+      end
     end 
   end
   

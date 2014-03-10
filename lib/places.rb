@@ -67,7 +67,8 @@ class Dungeon
   def choices
     move = 0
     load_data
-    until move == "2"
+    bread_crumb = 0
+    until move == "2" and bread_crumb == 0
       begin
         puts # formatting
         puts bar_top
@@ -85,10 +86,18 @@ class Dungeon
         puts "You walk further into the dark, dank, dirty, dungeon,"
         puts "smirking slightly at your awesome alliteration ability."
         puts # formatting
+        bread_crumb = bread_crumb + 1
         random_encounter
       when move == "2"
-        save_data
-        return
+        if bread_crumb < 1
+          save_data
+          return
+        end
+        bread_crumb = bread_crumb - 1
+        puts # formatting
+        puts "You head back toward town."
+        puts # formatting
+        random_encounter
       end
     end
   end

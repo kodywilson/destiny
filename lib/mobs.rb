@@ -43,7 +43,21 @@ end
 
 class GiantRat < Mobs
 
-  def initialize(str=12, agi=10, int=4, dmg=5, armor=6, hp=8, cur_hp=8, dodge=5, mana=0, cur_mana=0, xp=200, lvl=1, coin=1, name="ROUS")
+  def initialize(str=12, agi=10, int=4, dmg=5, armor=6, hp=8, cur_hp=8, dodge=5, mana=0, cur_mana=0, xp=150, lvl=1, coin=1, name="Giant Rat")
+    rat_type = dice(10)
+    case
+    when (1..8).include?(rat_type)
+      # no change, you just get the generic giant rat
+    when (9..10).include?(rat_type)
+      # this feller is much harder to defeat
+      str      = 16
+      dmg      = 8
+      hp       = 10
+      cur_hp   = 10
+      xp       = 400
+      coin     = 3
+      name     = "ROUS"
+    end
     super(str,agi,int,dmg,armor,hp,cur_hp,dodge,mana,cur_mana,xp,lvl,coin,name)
   end
 
@@ -52,6 +66,22 @@ end
 class Goblin < Mobs
 
   def initialize(str=10, agi=10, int=8, dmg=4, armor=6, hp=6, cur_hp=6, dodge=15, mana=2, cur_mana=2, xp=100, lvl=1, coin=1, name="Goblin")
+    # Should probably create a method that does the below
+    goblin_type = dice(10)
+    case
+    when (1..6).include?(goblin_type)
+      # no change, you just get the generic goblin
+    when (7..10).include?(goblin_type)
+      # this feller is stronger
+      str      = 16
+      dmg      = 6
+      armor    = 8
+      hp       = 8
+      cur_hp   = 8
+      xp       = 200
+      coin     = 2
+      name     = "Goblin Warrior"
+    end
     super(str,agi,int,dmg,armor,hp,cur_hp,dodge,mana,cur_mana,xp,lvl,coin,name)
   end
 
@@ -60,6 +90,22 @@ end
 class Kobold < Mobs
 
   def initialize(str=12, agi=8, int=8, dmg=5, armor=5, hp=6, cur_hp=6, dodge=10, mana=2, cur_mana=2, xp=150, lvl=1, coin=2, name="Kobold")
+    kobold_type = dice(10)
+    case
+    when (1..6).include?(kobold_type)
+      # no change, you just get the generic kobold
+    when (7..10).include?(kobold_type)
+      # this one has double the chance to dodge as a regular kobold
+      agi      = 16
+      dmg      = 6
+      armor    = 6
+      hp       = 8
+      cur_hp   = 8
+      dodge    = 20
+      xp       = 300
+      coin     = 4
+      name     = "Kobold Thief"
+    end
     super(str,agi,int,dmg,armor,hp,cur_hp,dodge,mana,cur_mana,xp,lvl,coin,name)
   end
 
@@ -67,7 +113,22 @@ end
 
 class Skeleton < Mobs
 
-  def initialize(str=12, agi=12, int=8, dmg=6, armor=6, hp=10, cur_hp=10, dodge=5, mana=0, cur_mana=0, xp=300, lvl=1, coin=4, name="Skeleton")
+  def initialize(str=12, agi=10, int=8, dmg=5, armor=6, hp=8, cur_hp=8, dodge=5, mana=0, cur_mana=0, xp=200, lvl=1, coin=3, name="Skeleton")
+    skeleton_type = dice(10)
+    case
+    when (1..7).include?(skeleton_type)
+      # no change, you just get the generic skeleton
+    when (8..10).include?(skeleton_type)
+      # this feller is considerably tougher
+      str      = 16
+      dmg      = 6
+      armor    = 8
+      hp       = 10
+      cur_hp   = 10
+      xp       = 300
+      coin     = 5
+      name     = "Skeletal Knight"
+    end
     super(str,agi,int,dmg,armor,hp,cur_hp,dodge,mana,cur_mana,xp,lvl,coin,name)
   end
 
