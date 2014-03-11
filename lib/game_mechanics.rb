@@ -10,11 +10,12 @@ module GameMechanics
     #restrict input to valid answers, but don't worry about case
     begin
       puts "Please enter [yes] or [no]:"
-      prompt; @game_select = STDIN.gets.chomp.downcase
-    end while not (@game_select == "yes" or @game_select == "no")
+      prompt; @yes_no = STDIN.gets.chomp.downcase
+    end while not (@yes_no == "yes" or @yes_no == "no")
   end
   
   def save_data
+    # increase level as player gets more xp!
     case
     when (0..1000).include?(@player.xp)
       @player.lvl = 1
@@ -28,6 +29,8 @@ module GameMechanics
       @player.lvl = 5
     when (11501..15000).include?(@player.xp)
       @player.lvl = 6
+    when (15001..19000).include?(@player.xp)
+      @player.lvl = 7
     end
     save_info = {
       role:     @player.class,
@@ -50,6 +53,10 @@ module GameMechanics
       @player = Knight.new
     elsif role == "Wizard"
       @player = Wizard.new
+    elsif role == "Cleric"
+      @player = Cleric.new
+    elsif role == "Rogue"
+      @player = Rogue.new
     end
     # Set stats based off information in load_info
     @player.lvl      = load_info['lvl']
@@ -58,7 +65,7 @@ module GameMechanics
     @player.name     = load_info['name']
     @player.cur_hp   = load_info['cur_hp']
     @player.cur_mana = load_info['cur_mana']
-    # Adjust stats based off player level
+    # Adjust stats based off of player level
     @player.hp       = @player.hp*@player.lvl
     @player.mana     = @player.mana*@player.lvl
     @player.dmg      = @player.dmg*@player.lvl
@@ -70,6 +77,7 @@ module GameMechanics
   end
 
   def restore_player
+    # heal the player when they choose to rest in the tavern
     @player.cur_hp   = @player.hp
     @player.cur_mana = @player.mana
     save_data
@@ -122,7 +130,7 @@ module GameMechanics
       when move == "1"
         puts # formatting
         if @player.class.to_s == "Knight"
-          puts "#{@player.name} swings the mighty sword at the #{@bad_guy.name}."
+          puts "#{@player.name} swings the mighty sword at the #{@bad_guy.name}!"
           puts # formatting
           dmg_mod = (@player.str-10)/2 # knights use their str for damage mod
           @dmg_dlt = dice(@player.dmg) + dmg_mod
@@ -138,18 +146,29 @@ module GameMechanics
           end while not (darts == 1 or darts == 2 or darts == 3)
           puts # formatting
           puts "#{@player.name} conjures #{darts} magic dart that zips toward the #{@bad_guy.name}." if darts == 1
-          puts "#{@player.name} conjures #{darts} magic darts that zip toward the #{@bad_guy.name}."
+          puts "#{@player.name} conjures #{darts} magic darts that zip toward the #{@bad_guy.name}." if darts > 1
           dmg_mod = (@player.int-10)/2 # wizards use their int for damage mod
           @dmg_dlt = dice(@player.dmg) + darts*@player.lvl + dmg_mod# more darts more damage, scales with level
           @player.cur_mana = @player.cur_mana - darts*@player.lvl # more darts more mana spent, scales with level
           # prevent negative mana, but always allow wizard to shoot at least one dart, no matter what
           @player.cur_mana = 0 if @player.cur_mana < 0
+        elsif @player.class.to_s == "Cleric"
+          puts "#{@player.name} brings the holy mace thundering down upon #{@bad_guy.name}!"
+          puts # formatting
+          dmg_mod = (@player.str-10)/2 # clerics use their str for damage mod
+          @dmg_dlt = dice(@player.dmg) + dmg_mod + 2 # placeholder holy damage until I get heals in the game.
+        elsif @player.class.to_s == "Rogue"
+          puts "#{@player.name} whirls the razor daggers and strikes at #{@bad_guy.name}!"
+          puts # formatting
+          dmg_mod = (@player.str-10)/2 + (@player.agi-10)/2 # rogues use their str AND agi for damage mod to help
+          @dmg_dlt = dice(@player.dmg) + dmg_mod            # make up for lower armor and health points
         end
         miss_chance = dice(100)
         agi_boost = (@bad_guy.agi-10)*2 + @bad_guy.dodge
         if (1..agi_boost).include?(miss_chance)
-            puts @bad_guy.name + " jumps out of the way, avoiding being hit by " + @player.name + "!"
-            puts # formatting
+          puts # formatting
+          puts @bad_guy.name + " jumps out of the way, avoiding being hit by " + @player.name + "!"
+          puts # formatting
         else
           @dmg_dlt = @dmg_dlt - @bad_guy.armor/4
           @dmg_dlt = 0 if @dmg_dlt < 1

@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name         = 'destiny'
-  s.version      = '0.0.3'
+  s.version      = '0.0.4'
   s.date         = '2014-03-10'
   s.summary      = "text rpg"
   s.description  = "Role playing game with distinct classes and character development"

@@ -27,23 +27,25 @@ class GameSelect
   def initialize default="default"
     #rspec with user input is more tricky, this allows me to test
     @default = default
-    return @game_select = @default if @default != "default"
+    return @yes_no = @default if @default != "default"
     yes_no
   end
 
   def outcome
-    if @game_select == "yes"
+    if @yes_no == "yes"
       # this is purely for rspec
 #      return "Starting a new game, please answer the following questions:" if @default != "default"
       begin
         puts # formatting
         puts "_"*50
         puts "Starting a new game, please answer the following questions:"
-        puts "Whould you like to play as a knight or wizard?"
+        puts "Whould you like to play as a knight, wizard, cleric, or rogue?"
         puts "[1]. Knight"
         puts "[2]. Wizard"
+        puts "[3]. Cleric"
+        puts "[4]. Rogue"
         prompt; class_choice = gets.chomp
-      end while not (class_choice == "1" or class_choice == "2")
+      end while not (class_choice == "1" or class_choice == "2" or class_choice == "3" or class_choice == "4")
       begin
         player_name = choose_name
         puts #formatting
@@ -55,6 +57,10 @@ class GameSelect
         @player = Knight.new
       elsif class_choice == "2"
         @player = Wizard.new
+      elsif class_choice == "3"
+        @player = Cleric.new
+      elsif class_choice == "4"
+        @player = Rogue.new
       end
       # Set player name, write attributes to save file, then return player to binary
       @player.name = "#{player_name}"
@@ -65,7 +71,7 @@ class GameSelect
       puts "Ye are a young #{@player.class} with magnificent deeds ahead of ye!"
       puts # formatting
       @player
-    elsif @game_select == "no"
+    elsif @yes_no == "no"
       # for rspec
       return "Loading the existing game." if @default != "default"
       puts # formatting
@@ -78,24 +84,12 @@ class GameSelect
 end
 
 class NewGame
+  # Not using this right now. Later, I hope to support multiple characters and then
+  # I will move the newgame stuff into here. Need a save file with multiple lines support first
   attr_accessor :save_slot, :char_name
   
   def initialize new_game
     @new_game = new_game
-  end
-  
-  def answer_was game_select="yes"
-    @game_select = game_select
-    #should probably be a case statement that verifies that only yes, y, no, or n was entered
-    # and ignores caps (lower and upper are valid)
-    if @game_select == "yes"
-      puts # formatting
-      puts "Starting a new game, please enter character name:"
-#      @character_name = gets
-    else
-      # Here I will display both save slots with the character names.
-      "Please select a game to load:"
-    end
   end
   
 end
