@@ -33,13 +33,15 @@ module GameMechanics
       @player.lvl = 7
     end
     save_info = {
-      role:     @player.class,
-      cur_hp:   @player.cur_hp,
-      cur_mana: @player.cur_mana,
-      xp:       @player.xp,
-      lvl:      @player.lvl,
-      coin:     @player.coin,
-      name:     @player.name
+      role:       @player.class,
+      cur_hp:     @player.cur_hp,
+      cur_mana:   @player.cur_mana,
+      xp:         @player.xp,
+      lvl:        @player.lvl,
+      coin:       @player.coin,
+      buff_food:  @player.buff_food,
+      buff_drink: @player.buff_drink,
+      name:       @player.name
     }
     File.open(@@save_file, "w") do |f|
       f.write(save_info.to_json)
@@ -59,12 +61,14 @@ module GameMechanics
       @player = Rogue.new
     end
     # Set stats based off information in load_info
-    @player.lvl      = load_info['lvl']
-    @player.xp       = load_info['xp']   
-    @player.coin     = load_info['coin']
-    @player.name     = load_info['name']
-    @player.cur_hp   = load_info['cur_hp']
-    @player.cur_mana = load_info['cur_mana']
+    @player.lvl        = load_info['lvl']
+    @player.xp         = load_info['xp']   
+    @player.coin       = load_info['coin']
+    @player.name       = load_info['name']
+    @player.cur_hp     = load_info['cur_hp']
+    @player.cur_mana   = load_info['cur_mana']
+    @player.buff_food  = load_info['buff_food']
+    @player.buff_drink = load_info['buff_drink']
     # Adjust stats based off of player level
     @player.hp       = @player.hp*@player.lvl
     @player.mana     = @player.mana*@player.lvl
@@ -95,6 +99,10 @@ module GameMechanics
     "-"*61
   end
   
+  def is_even?(x)
+    x % 2 == 0 ? true : false
+  end
+  
   def player_croaks
     puts # formatting
     puts "It happens to the best of us #{@player.name}."
@@ -111,11 +119,12 @@ module GameMechanics
     # scale power of opponent to level of player
     @bad_guy.cur_hp       = @bad_guy.hp*@player.lvl
     @bad_guy.cur_mana     = @bad_guy.mana*@player.lvl
-    @bad_guy.dmg      = @bad_guy.dmg*@player.lvl
+    @bad_guy.dmg          = @bad_guy.dmg*@player.lvl
     puts @bad_guy.name + " says, you kill my father, now you will die!!" unless (@bad_guy.name == "Giant Rat" or @bad_guy.name == "Skeleton")
     move = 0
     until move == "2"
       begin
+        @heal = false
         puts # formatting
         puts bar_low + "--"
         puts " #{@player.name} - HP: #{@player.cur_hp} - Mana: #{@player.cur_mana} | - VS - | #{@bad_guy.name} - HP: #{@bad_guy.cur_hp} - Mana: #{@bad_guy.cur_mana}"
@@ -124,8 +133,12 @@ module GameMechanics
         puts "#{@bad_guy.name} vs. #{@player.name}, what will you do?"
         puts "[1]. Attack."
         puts "[2]. Run."
+        puts "[3]. Cast Heal and Attack." if @player.class.to_s == "Cleric"
         prompt; move = gets.chomp
-      end while not (move == "1" or move == "2")
+        move = "4" if move == "3" and @player.class.to_s != "Cleric"
+      end while not (move == "1" or move == "2" or move == "3")
+      @heal = true if move == "3" # set cleric heal flag to true
+      move = "1" if move == "3" # now that flag is set, set move to 1 for the attack part
       case
       when move == "1"
         puts # formatting
@@ -137,7 +150,7 @@ module GameMechanics
         elsif @player.class.to_s == "Wizard"
           begin
             puts "How many magic darts will you shoot?"
-            puts "[1]."
+            puts "[1]." # always allow wizard one dart even without enough mana
             puts "[2]." if @player.cur_mana - 2*@player.lvl >= 0
             puts "[3]." if @player.cur_mana - 3*@player.lvl >= 0
           prompt; darts = gets.chomp.to_i
@@ -153,10 +166,21 @@ module GameMechanics
           # prevent negative mana, but always allow wizard to shoot at least one dart, no matter what
           @player.cur_mana = 0 if @player.cur_mana < 0
         elsif @player.class.to_s == "Cleric"
+          if @heal == true
+            heal_bonus = 0
+            if @player.cur_mana - @player.lvl*2 >= 0
+              heal_bonus = dice(4)*@player.lvl
+              @player.cur_mana = @player.cur_mana - @player.lvl*2
+            end
+            @heal_amount = dice(2)*@player.lvl + heal_bonus
+            puts "Praying intently, you add #{@heal_amount} health points as you prepare to strike."
+            puts # formatting
+            @player.cur_hp = @player.cur_hp + @heal_amount
+          end
           puts "#{@player.name} brings the holy mace thundering down upon #{@bad_guy.name}!"
           puts # formatting
           dmg_mod = (@player.str-10)/2 # clerics use their str for damage mod
-          @dmg_dlt = dice(@player.dmg) + dmg_mod + 2 # placeholder holy damage until I get heals in the game.
+          @dmg_dlt = dice(@player.dmg) + dmg_mod
         elsif @player.class.to_s == "Rogue"
           puts "#{@player.name} whirls the razor daggers and strikes at #{@bad_guy.name}!"
           puts # formatting
@@ -181,7 +205,11 @@ module GameMechanics
           puts "You have slain the #{@bad_guy.name} and won the day!"
           # rewards for winning the battle!
           @player.xp = @player.xp + @bad_guy.xp
-          @player.coin = @player.coin + @bad_guy.coin
+          if @player.class.to_s == "Rogue"
+            @player.coin = @player.coin + @bad_guy.coin + @player.lvl # rogues get bonus cash
+          else
+            @player.coin = @player.coin + @bad_guy.coin
+          end
           save_data
           return
         else
@@ -195,8 +223,12 @@ module GameMechanics
             dmg_taken = dice(@bad_guy.dmg) - @player.armor/4
             dmg_taken = 0 if dmg_taken < 1
             @player.cur_hp = @player.cur_hp - dmg_taken
-            puts "#{@bad_guy.name} hits YOU for #{dmg_taken} damage!" unless dmg_taken < 1
-            puts "OUCH!" unless dmg_taken < 1
+            if dmg_taken > 0
+              puts "#{@bad_guy.name} hits YOU for #{dmg_taken} damage!"
+              puts "OUCH!"
+            else
+              puts "You deflect the blow and take no damage."
+            end
           end
           puts #formatting
         end
@@ -214,36 +246,42 @@ module GameMechanics
         puts "The #{@bad_guy.name} turns to look and you high tail it away!"
         puts # formatting
         run_away = dice(10)
+        run_away = dice(15) if @player.class.to_s == "Rogue" # rogues have a higher chance of getting away
         case
         when (1..8).include?(run_away)
-        # you got away this time
-        puts "You escape from the #{@bad_guy.name} while it foolishly looks away."
+          # you got away this time
+          puts "You escape from the #{@bad_guy.name} while it foolishly looks away."
         when (9..10).include?(run_away)
-        # not so lucky this time
-        puts "#{@bad_guy.name} says, do you think I was spawned yesterday?"
-        puts # formatting
-        puts "#{@bad_guy.name} viciously attacks #{@player.name}!"
-        puts # formatting
-        miss_chance = dice(100)
-        agi_boost = (@player.agi-10)*2 + @player.dodge
-        if (1..agi_boost).include?(miss_chance)
-          puts @player.name + " totally leaps out of the way, avoiding being hit by " + @bad_guy.name + "!"
-        else
-          dmg_taken = dice(@bad_guy.dmg) - @player.armor/4
-          dmg_taken = 0 if dmg_taken < 1
-          @player.cur_hp = @player.cur_hp - dmg_taken
-          puts "#{@bad_guy.name} hits YOU for #{dmg_taken} damage!" unless dmg_taken < 1
-          puts "OUCH!" unless dmg_taken < 1
-        end
-        puts #formatting
-        if @player.cur_hp <= 0
-          puts "You knew when to fold em, but the #{@bad_guy.name} got the better of you anyway."
-          player_croaks
-        end
-        puts "You manage to accidentally stick a boot firmly in the #{@bad_guy.name}'s face"
-        puts "allowing you to escape!"
-        puts # formatting
-        end
+          # not so lucky this time
+          puts "#{@bad_guy.name} says, do you think I was spawned yesterday?"
+          puts # formatting
+          puts "#{@bad_guy.name} viciously attacks #{@player.name}!"
+          puts # formatting
+          miss_chance = dice(100)
+          agi_boost = (@player.agi-10)*2 + @player.dodge
+          if (1..agi_boost).include?(miss_chance)
+            puts @player.name + " totally leaps out of the way, avoiding being hit by " + @bad_guy.name + "!"
+          else
+            dmg_taken = dice(@bad_guy.dmg) - @player.armor/4
+            dmg_taken = 0 if dmg_taken < 1
+            @player.cur_hp = @player.cur_hp - dmg_taken
+            puts "#{@bad_guy.name} hits YOU for #{dmg_taken} damage!" unless dmg_taken < 1
+            puts "OUCH!" unless dmg_taken < 1
+          end
+          puts #formatting
+          if @player.cur_hp <= 0
+            puts "You knew when to fold em, but the #{@bad_guy.name} got the better of you anyway."
+            player_croaks
+          end
+          puts "You manage to accidentally stick a boot firmly in the #{@bad_guy.name}'s face"
+          puts "allowing you to escape!"
+          puts # formatting
+        when (11..15).include?(run_away)
+          # only a rogue could be so lucky
+          puts "Ah, the life of a rogue, so free, so evasive!"
+          puts "#{@player.name}, using your roguish powers you slip away unseen, leaving"
+          puts "#{@bad_guy.name} cursing and muttering in the dark."
+        end  
         save_data
         return
       end
@@ -292,8 +330,8 @@ module GameMechanics
       combat(Kobold)
     when (16..18).include?(chance)
       puts #format
-      puts "Although you have never heard bones scrape across a floor"
-      puts "before, you know without a doubt what approaches..."
+      puts "There is a sudden chill in the air and you hear scraping sounds."
+      puts "You know without a doubt what approaches..."
       puts #format
       combat(Skeleton)
     when (19..20).include?(chance)
@@ -311,6 +349,7 @@ module GameMechanics
         puts "You have tripped and died."
         player_croaks
       end
+      save_data
     end 
   end
   

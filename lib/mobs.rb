@@ -1,6 +1,6 @@
 class Mobs
 
-  attr_accessor :str, :agi, :int, :dmg, :armor, :hp, :cur_hp, :dodge, :mana, :cur_mana, :xp, :lvl, :coin, :name
+  attr_accessor :str, :agi, :int, :dmg, :armor, :hp, :cur_hp, :dodge, :mana, :cur_mana, :xp, :lvl, :coin, :name, :buff_food, :buff_drink
   
   def initialize(str, agi, int, dmg, armor, hp, cur_hp, dodge, mana, cur_mana, xp, lvl, coin, name="MOB")
     @str          = str
@@ -28,6 +28,8 @@ class Cleric < Mobs
   # clerics can heal themselves, and even put their HP's above max during combat, as a buffer
   def initialize(str=12, agi=12, int=10, dmg=5, armor=8, hp=6, cur_hp=6, dodge=5, mana=12, cur_mana=12, xp=0, lvl=1, coin=0, name="Cleric")
     super(str,agi,int,dmg,armor,hp,cur_hp,dodge,mana,cur_mana,xp,lvl,coin,name)
+    @buff_food = false
+    @buff_drink = false
   end
 
 end
@@ -36,6 +38,8 @@ class Knight < Mobs
   # the knight has the highest melee damage, strength, and armor
   def initialize(str=14, agi=12, int=8, dmg=6, armor=10, hp=8, cur_hp=8, dodge=10, mana=8, cur_mana=8, xp=0, lvl=1, coin=0, name="Knight")
     super(str,agi,int,dmg,armor,hp,cur_hp,dodge,mana,cur_mana,xp,lvl,coin,name)
+    @buff_food = false # could have made a PlayerClass class and had these like Knight < PlayerClass and then PlayerClass would have < Mobs
+    @buff_drink = false
   end
 
 end
@@ -44,6 +48,8 @@ class Rogue < Mobs
   # rogues have good melee damage and the highest dodge, they get extra coin too :)
   def initialize(str=12, agi=16, int=12, dmg=6, armor=6, hp=6, cur_hp=6, dodge=20, mana=0, cur_mana=0, xp=0, lvl=1, coin=0, name="Rogue")
     super(str,agi,int,dmg,armor,hp,cur_hp,dodge,mana,cur_mana,xp,lvl,coin,name)
+    @buff_food = false
+    @buff_drink = false
   end
 
 end
@@ -52,6 +58,8 @@ class Wizard < Mobs
   # wizards can cast damaging spells
   def initialize(str=8, agi=10, int=16, dmg=4, armor=4, hp=4, cur_hp=4, dodge=5, mana=16, cur_mana=16, xp=0, lvl=1, coin=0, name="Wizard")
     super(str,agi,int,dmg,armor,hp,cur_hp,dodge,mana,cur_mana,xp,lvl,coin,name)
+    @buff_food = false
+    @buff_drink = false
   end
 
 end
