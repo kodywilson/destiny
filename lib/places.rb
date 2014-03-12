@@ -68,8 +68,10 @@ class Dungeon
         puts "Now #{@player.name}, what will you do next?"
         puts "[1]. Go deeper into the dungeon."
         puts "[2]. Return to town."
+        puts "[3]. Conjure Wizard Familiar" if @player.class.to_s == "Wizard" and @player.spell_buff == false
         prompt; move = gets.chomp
-      end while not (move == "1" or move == "2")
+        move = "4" if move == "3" and (@player.class.to_s != "Wizard" or @player.spell_buff == true)
+      end while not (move == "1" or move == "2" or move == "3")
       # apply food buff
       @player.cur_hp = @player.cur_hp + @player.lvl if @player.buff_food == true
       # prevent food buff from raising current health points above maximum
@@ -97,6 +99,11 @@ class Dungeon
           # remove food buffs from player when they leave the dungeon
           @player.buff_food = false
           @player.buff_drink = false
+          if @player.class.to_s == "Wizard" and @player.spell_buff == true
+            puts "Drako wishes you well and fades away, ready to help another day."
+            puts #formatting
+            @player.spell_buff = false
+          end
           save_data
           return
         end
@@ -105,6 +112,14 @@ class Dungeon
         puts "You head back toward town."
         puts # formatting
         random_encounter
+      when move == "3"
+        puts # formatting
+        puts "#{@player.name} concentrates intently while waving the magic wand and casting the spell..."
+        puts # formatting
+        puts "A tiny dragon appears and curls up on your shoulder, snoring loudly."
+        @player.spell_buff = true
+        @player.cur_mana = @player.cur_mana - @player.lvl*2
+        save_data
       end
     end
   end

@@ -25,7 +25,7 @@ class GameSelect
   attr_accessor :game_select
 
   def initialize default="default"
-    #rspec with user input is more tricky, this allows me to test
+    #rspec with user input is more tricky, this allows me to test no response
     @default = default
     return @yes_no = @default if @default != "default"
     yes_no
@@ -33,8 +33,6 @@ class GameSelect
 
   def outcome
     if @yes_no == "yes"
-      # this is purely for rspec
-#      return "Starting a new game, please answer the following questions:" if @default != "default"
       begin
         puts # formatting
         puts "_"*50

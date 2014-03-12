@@ -41,6 +41,7 @@ module GameMechanics
       coin:       @player.coin,
       buff_food:  @player.buff_food,
       buff_drink: @player.buff_drink,
+      spell_buff: @player.spell_buff,
       name:       @player.name
     }
     File.open(@@save_file, "w") do |f|
@@ -69,6 +70,7 @@ module GameMechanics
     @player.cur_mana   = load_info['cur_mana']
     @player.buff_food  = load_info['buff_food']
     @player.buff_drink = load_info['buff_drink']
+    @player.spell_buff = load_info['spell_buff']
     # Adjust stats based off of player level
     @player.hp       = @player.hp*@player.lvl
     @player.mana     = @player.mana*@player.lvl
@@ -172,8 +174,10 @@ module GameMechanics
               heal_bonus = dice(4)*@player.lvl
               @player.cur_mana = @player.cur_mana - @player.lvl*2
             end
-            @heal_amount = dice(2)*@player.lvl + heal_bonus
+            @heal_amount = dice(2)*@player.lvl + heal_bonus + 1 # testing with the +1, what I am going for here
+                                                                # is to balance the heal with their lower damage and hp
             puts "Praying intently, you add #{@heal_amount} health points as you prepare to strike."
+            puts "#{@player.name}, any health points above your normal maximum will fade after combat." if @player.cur_hp > @player.hp
             puts # formatting
             @player.cur_hp = @player.cur_hp + @heal_amount
           end
@@ -210,6 +214,7 @@ module GameMechanics
           else
             @player.coin = @player.coin + @bad_guy.coin
           end
+          @player.cur_hp = @player.hp if @player.cur_hp > @player.hp # this is done to remove extra hp from cleric
           save_data
           return
         else
@@ -221,6 +226,12 @@ module GameMechanics
             puts @player.name + " totally leaps out of the way, avoiding being hit by " + @bad_guy.name + "!"
           else
             dmg_taken = dice(@bad_guy.dmg) - @player.armor/4
+            if @player.class.to_s == "Wizard" and @player.spell_buff == true and dmg_taken > 1
+              draco_helps = @player.lvl
+              dmg_taken = dmg_taken - draco_helps
+              puts "Draco helps shield you absorbing some of the potential damage."
+              puts # formatting
+            end
             dmg_taken = 0 if dmg_taken < 1
             @player.cur_hp = @player.cur_hp - dmg_taken
             if dmg_taken > 0
