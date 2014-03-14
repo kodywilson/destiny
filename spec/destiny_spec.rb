@@ -1,4 +1,5 @@
 require 'destiny'
+require 'choice'
 
 describe GameSelect do
 
@@ -157,21 +158,34 @@ describe Skeleton do
 
 end
 
+
+def fake_stdin(*args)
+  begin
+    $stdin = StringIO.new
+    $stdin.puts(args.shift) until args.empty?
+    $stdin.rewind
+    yield
+  ensure
+    $stdin = STDIN
+  end
+end
+
 describe Choice do
   it "should prompt user with choices" do
-    choice = Choice.new 'What will you do when you see a ghost?', {
+    choice = Choice.new "What will you do when you see a ghost?", {
       '1' => 'run',
       '2' => 'hide'
     }
     msg = <<-MSG
-      What will you do when you see a ghost?
-      [1] run
-      [2] hide
+What will you do when you see a ghost?
+[1] run
+[2] hide
     MSG
-    STDOUT.should.receive :puts, msg
-    STDIN.should.receive(:read).and_return("1\n")
-    answer = choice.prompt
-    answer.should eq "1"
+    fake_stdin("1\n") do
+      STDOUT.should_receive(:puts).with(msg)
+      answer = choice.prompt
+      answer.should eq "1"
+    end
   end
 
 end
