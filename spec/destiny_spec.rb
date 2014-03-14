@@ -1,5 +1,6 @@
 require 'destiny'
 require 'choice'
+require 'colorize'
 
 describe GameSelect do
 
@@ -178,8 +179,8 @@ describe Choice do
     }
     msg = <<-MSG
 What will you do when you see a ghost?
-[1] run
-[2] hide
+#{"[1] ".red}run
+#{"[2] ".red}hide
     MSG
     fake_stdin("1\n") do
       STDOUT.should_receive(:puts).with(msg)
