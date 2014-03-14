@@ -1,4 +1,4 @@
-
+require 'colorize'
 
 class Choice
   def initialize msg, choices
@@ -10,7 +10,7 @@ class Choice
     p = []
     p << @msg
     @choices.each do |key, description|
-      p << "[#{key}] #{description}"
+      p << "[#{key}] ".red +  description
     end
     puts "#{p.join("\n")}\n"
     gets.chomp
