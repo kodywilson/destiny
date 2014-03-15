@@ -159,18 +159,6 @@ describe Skeleton do
 
 end
 
-
-def fake_stdin(*args)
-  begin
-    $stdin = StringIO.new
-    $stdin.puts(args.shift) until args.empty?
-    $stdin.rewind
-    yield
-  ensure
-    $stdin = STDIN
-  end
-end
-
 describe Choice do
   it "should prompt user with choices" do
     choice = Choice.new "What will you do when you see a ghost?", {
@@ -182,11 +170,8 @@ What will you do when you see a ghost?
 #{"[1] ".red}run
 #{"[2] ".red}hide
     MSG
-    fake_stdin("1\n") do
-      STDOUT.should_receive(:puts).with(msg)
-      answer = choice.prompt
-      answer.should eq "1"
-    end
+    choice.should_receive(:puts).with(msg)
+    choice.should_receive(:gets).and_return("1\n")
+    choice.prompt
   end
-
 end
