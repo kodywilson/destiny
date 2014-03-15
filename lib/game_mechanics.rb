@@ -1,11 +1,11 @@
 module GameMechanics
-  
+
   @@save_file = '../lib/save_game.json'
-  
+
   def prompt
     print ">> "
   end
-  
+
   def yes_no
     #restrict input to valid answers, but don't worry about case
     begin
@@ -13,7 +13,7 @@ module GameMechanics
       prompt; @yes_no = STDIN.gets.chomp.downcase
     end while not (@yes_no == "yes" or @yes_no == "no")
   end
-  
+
   def save_data
     # increase level as player gets more xp!
     case
@@ -48,7 +48,7 @@ module GameMechanics
       f.write(save_info.to_json)
     end
   end
-  
+
   def load_data
     load_info = JSON.parse(File.read(@@save_file))
     role = load_info['role']
@@ -63,7 +63,7 @@ module GameMechanics
     end
     # Set stats based off information in load_info
     @player.lvl        = load_info['lvl']
-    @player.xp         = load_info['xp']   
+    @player.xp         = load_info['xp']
     @player.coin       = load_info['coin']
     @player.name       = load_info['name']
     @player.cur_hp     = load_info['cur_hp']
@@ -79,7 +79,7 @@ module GameMechanics
     # I was trying to do the above assignments with iteration, there has to be a way!
 #    load_info.each do |attribute, value|
 #      @player.#{attribute} = value unless attribute == "role"
-#    end  
+#    end
   end
 
   def restore_player
@@ -92,19 +92,19 @@ module GameMechanics
   def bar_top
     "_"*27 + " STATS " + "_"*27
   end
-  
+
   def stat_bar name, xp, lvl, coin, cur_hp, cur_mana
     "  Name: #{name} | XP: #{xp} | Lvl: #{lvl} | Coin: #{coin} | HP: #{cur_hp} | Mana: #{cur_mana}"
   end
-  
+
   def bar_low
     "-"*61
   end
-  
+
   def is_even?(x)
     x % 2 == 0 ? true : false
   end
-  
+
   def player_croaks
     puts # formatting
     puts "It happens to the best of us #{@player.name}."
@@ -114,7 +114,7 @@ module GameMechanics
     puts "Better luck next time, eh?"
     exit
   end
-  
+
   def combat bad_guy
     # create an opponent
     @bad_guy = bad_guy.new
@@ -132,11 +132,13 @@ module GameMechanics
         puts " #{@player.name} - HP: #{@player.cur_hp} - Mana: #{@player.cur_mana} | - VS - | #{@bad_guy.name} - HP: #{@bad_guy.cur_hp} - Mana: #{@bad_guy.cur_mana}"
         puts bar_low + "--"
         puts # formatting
-        puts "#{@bad_guy.name} vs. #{@player.name}, what will you do?"
-        puts "[1]. Attack."
-        puts "[2]. Run."
-        puts "[3]. Cast Heal and Attack." if @player.class.to_s == "Cleric"
-        prompt; move = gets.chomp
+        choice_opts = {
+          "1" => "Attack.",
+          "2" => "Run."
+        }
+        choice_opts["3"] = "Cast Heal and Attack." if @player.class.to_s == "Cleric"
+        c = Choice.new "#{@bad_guy.name} vs. #{@player.name}, what will you do?", choice_opts
+        move = c.prompt
         move = "4" if move == "3" and @player.class.to_s != "Cleric"
       end while not (move == "1" or move == "2" or move == "3")
       @heal = true if move == "3" # set cleric heal flag to true
@@ -151,13 +153,13 @@ module GameMechanics
           @dmg_dlt = dice(@player.dmg) + dmg_mod
         elsif @player.class.to_s == "Wizard"
           begin
-            puts "How many magic darts will you shoot?"
-            puts "[1]." # always allow wizard one dart even without enough mana
-            puts "[2]." if @player.cur_mana - 2*@player.lvl >= 0
-            puts "[3]." if @player.cur_mana - 3*@player.lvl >= 0
-          prompt; darts = gets.chomp.to_i
-          darts = 4 if darts == 2 and @player.cur_mana - 2*@player.lvl < 0
-          darts = 4 if darts == 3 and @player.cur_mana - 3*@player.lvl < 0
+            choice_opts = { "1" => "one dart" }
+            choice_opts["2"] = "two darts"   if @player.cur_mana - 2*@player.lvl >= 0
+            choice_opts["3"] = "three darts" if @player.cur_mana - 3*@player.lvl >= 0
+            c = Choice.new "How many magic darts will you shoot?", choice_opts
+            darts = c.prompt.to_i
+            darts = 4 if darts == 2 and @player.cur_mana - 2*@player.lvl < 0
+            darts = 4 if darts == 3 and @player.cur_mana - 3*@player.lvl < 0
           end while not (darts == 1 or darts == 2 or darts == 3)
           puts # formatting
           puts "#{@player.name} conjures #{darts} magic dart that zips toward the #{@bad_guy.name}." if darts == 1
@@ -292,14 +294,14 @@ module GameMechanics
           puts "Ah, the life of a rogue, so free, so evasive!"
           puts "#{@player.name}, using your roguish powers you slip away unseen, leaving"
           puts "#{@bad_guy.name} cursing and muttering in the dark."
-        end  
+        end
         save_data
         return
       end
     end
-    
+
   end
-  
+
   def dice(sides=6,&block)
     if block_given?
       block.call(rand(1..sides))
@@ -361,7 +363,7 @@ module GameMechanics
         player_croaks
       end
       save_data
-    end 
+    end
   end
-  
+
 end
