@@ -180,17 +180,18 @@ describe EdgeColoringGraph do
 
   map = <<-MAP
   0 1 2 3 4 5 6 7 8 9
-0| | |r| | |b| |g| | |
-1| | | | | | | | | | |
-2|r| | |g| |y| | |b| |
-3| | |g| | | |y| | | |
-4| | | | | | | | | | |
-5|b| |y| | | | | | | |
-6| | | |y| | | |b| |r|
-7|g| | | | | |b| | |y|
-8| | |b| | | | | | |g|
-9| | | | | | |r|y|g| |
+0| | |r| | |w| |c| | |
+1| | | | |w|c| | | | |
+2|r| | |c| |i| | |w| |
+3| | |c| | | |i| | | |
+4| |w| | | | | | | | |
+5|w|c|i| | | | | | | |
+6| | | |i| | | |w| |r|
+7|g| | | | | |w| | |i|
+8| | |w| | | | | | |c|
+9| | | | | | |r|i|c| |
   MAP
+
   it 'should parse the map' do
     g = EdgeColoringGraph.new map
     g[0, 2].should eq true
