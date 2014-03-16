@@ -175,3 +175,30 @@ What will you do when you see a ghost?
     choice.prompt
   end
 end
+
+describe EdgeColoringGraph do
+
+  map = <<-MAP
+  0 1 2 3 4 5 6 7 8 9
+0| | |r| | |b| |g| | |
+1| | | | | | | | | | |
+2|r| | |g| |y| | |b| |
+3| | |g| | | |y| | | |
+4| | | | | | | | | | |
+5|b| |y| | | | | | | |
+6| | | |y| | | |b| |r|
+7|g| | | | | |b| | |y|
+8| | |b| | | | | | |g|
+9| | | | | | |r|y|g| |
+  MAP
+  it 'should parse the map' do
+    g = EdgeColoringGraph.new map
+    g[0, 2].should eq true
+    g[1, 3].should eq false
+  end
+  it 'should give the color of edges' do
+    g = EdgeColoringGraph.new map
+    g[0, 2].color.should eq 'r'
+    g[2, 3].color.should eq 'g'
+  end
+end

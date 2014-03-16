@@ -46,6 +46,23 @@ class Town
 end
 
 class Dungeon
+  # a sample map
+  # a map is an edge array defining a graph. Edges have colorings.
+  # TODO: make a set of maps and define them elsewhere
+  #       write an algorithm to create good maps
+  map = <<-MAP
+  0 1 2 3 4 5 6 7 8 9
+0| | |r| | |b| |g| | |
+1| | | | | | | | | | |
+2|r| | |g| |y| | |b| |
+3| | |g| | | |y| | | |
+4| | | | | | | | | | |
+5|b| |y| | | | | | | |
+6| | | |y| | | |b| |r|
+7|g| | | | | |b| | |y|
+8| | |b| | | | | | |g|
+9| | | | | | |r|y|g| |
+  MAP
 
   # can get here from town, initialize just gives a one time (per visit) message
   def initialize
