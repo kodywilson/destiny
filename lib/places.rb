@@ -1,8 +1,9 @@
 # This file will contain the various places the player can go
 # Town, Tavern, Dungeon and options in each
+require 'choice'
 
 class Town
-  
+
   def initialize
     # Town is only available as an option in the Dungeon (to return to)
     # initialize is only called the first time, so this greeting is only seen once
@@ -10,7 +11,7 @@ class Town
     puts "You walk into town, scanning each nook and cranny. Most faces are friendly,"
     puts "some are not..."
   end
-  
+
   def choices
     move = 0
     until move == "3"
@@ -21,11 +22,13 @@ class Town
         puts stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
         puts bar_low
         puts # formatting
-        puts "Please choose where you will head next:"
-        puts "[1]. The Dungeon"
-        puts "[2]. Ye Old Tavern"
-        puts "[3]. Exit Game"
-        prompt; move = gets.chomp
+        c = Choice.new "Please choose where you will head next:",
+          {
+            "1" => "The Dungeon",
+            "2" => "Ye Old Tavern",
+            "3" => "Exit Game"
+          }
+        move = c.prompt
       end while not (move == "1" or move == "2" or move == "3")
       case
       when move == "1"
@@ -43,7 +46,7 @@ class Town
 end
 
 class Dungeon
-  
+
   # can get here from town, initialize just gives a one time (per visit) message
   def initialize
     puts # formatting
@@ -53,7 +56,7 @@ class Dungeon
     rand_greet = "As you enter the dungeon, you notice strange markings along the walls..." if rand_greet == 3
     puts rand_greet
   end
-  
+
   def choices
     move = 0
     load_data
@@ -65,11 +68,16 @@ class Dungeon
         puts stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
         puts bar_low
         puts # formatting
-        puts "Now #{@player.name}, what will you do next?"
-        puts "[1]. Go deeper into the dungeon."
-        puts "[2]. Return to town."
-        puts "[3]. Conjure Wizard Familiar" if @player.class.to_s == "Wizard" and @player.spell_buff == false
-        prompt; move = gets.chomp
+        choice_options = {
+          "1" => "Go deeper into the dungeon.",
+          "2" => "Return to town."
+        }
+        if @player.class.to_s == "Wizard" and
+           @player.spell_buff == false
+          choice_options["3"] = "Conjure Wizard Familiar"
+        end
+        c = Choice.new "Now #{@player.name}, what will you do next?", choice_options
+        move = c.prompt
         move = "4" if move == "3" and (@player.class.to_s != "Wizard" or @player.spell_buff == true)
       end while not (move == "1" or move == "2" or move == "3")
       # apply food buff
@@ -127,7 +135,7 @@ class Dungeon
 end
 
 class Tavern
-  
+
   # only available as an option in the Town
   # The tavern will "heal" the player by restoring mana and hp
   def initialize
@@ -139,7 +147,7 @@ class Tavern
     puts "Some rest would probably do you good, #{@player.name}." if @player.cur_hp < @player.hp
     puts # formatting
   end
-  
+
   def choices
     move = 0
     until move == "4"
@@ -151,12 +159,14 @@ class Tavern
         puts # formatting
         room_cost = @player.lvl*3
         nourish_cost = @player.lvl*2
-        puts "What would you like to do in the tavern, #{@player.name}?"
-        puts "[1]. Buy some food.    | Cost: #{nourish_cost} coins."
-        puts "[2]. Buy a drink.      | Cost: #{nourish_cost} coins."
-        puts "[3]. Rest.             | Cost: #{room_cost} coins."
-        puts "[4]. Leave the tavern."
-        prompt; move = gets.chomp
+        c = Choice.new "What would you like to do in the tavern, #{@player.name}?",
+          {
+            "1" => "Buy some food.    | Cost: #{nourish_cost} coins.",
+            "2" => "Buy a drink.      | Cost: #{nourish_cost} coins.",
+            "3" => "Rest.             | Cost: #{room_cost} coins.",
+            "4" => "Leave the tavern."
+          }
+          move = c.prompt
       end while not (move == "1" or move == "2" or move == "3" or move == "4")
       case
       when move == "1"

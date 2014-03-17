@@ -2,6 +2,7 @@ require "json"
 require "game_mechanics"
 require "mobs"
 require "places"
+require "choice"
 
 include GameMechanics
 
@@ -37,12 +38,14 @@ class GameSelect
         puts # formatting
         puts "_"*50
         puts "Starting a new game, please answer the following questions:"
-        puts "Whould you like to play as a knight, wizard, cleric, or rogue?"
-        puts "[1]. Knight"
-        puts "[2]. Wizard"
-        puts "[3]. Cleric"
-        puts "[4]. Rogue"
-        prompt; class_choice = gets.chomp
+        c = Choice.new "Whould you like to play as a knight, wizard, cleric, or rogue?",
+          {
+            "1" => "Knight",
+            "2" => "Wizard",
+            "3" => "Cleric",
+            "4" => "Rogue"
+          }
+          class_choice = c.prompt
       end while not (class_choice == "1" or class_choice == "2" or class_choice == "3" or class_choice == "4")
       begin
         player_name = choose_name
@@ -78,16 +81,16 @@ class GameSelect
       @player = load_data
     end
   end
-  
+
 end
 
 class NewGame
   # Not using this right now. Later, I hope to support multiple characters and then
   # I will move the newgame stuff into here. Need a save file with multiple lines support first
   attr_accessor :save_slot, :char_name
-  
+
   def initialize new_game
     @new_game = new_game
   end
-  
+
 end
