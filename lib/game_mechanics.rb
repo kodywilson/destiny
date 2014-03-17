@@ -177,9 +177,9 @@ module GameMechanics
             @heal_amount = dice(2)*@player.lvl + heal_bonus + 1 # testing with the +1, what I am going for here
                                                                 # is to balance the heal with their lower damage and hp
             puts "Praying intently, you add #{@heal_amount} health points as you prepare to strike."
+            @player.cur_hp = @player.cur_hp + @heal_amount
             puts "#{@player.name}, any health points above your normal maximum will fade after combat." if @player.cur_hp > @player.hp
             puts # formatting
-            @player.cur_hp = @player.cur_hp + @heal_amount
           end
           puts "#{@player.name} brings the holy mace thundering down upon #{@bad_guy.name}!"
           puts # formatting
