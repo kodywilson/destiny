@@ -1,5 +1,6 @@
 require 'destiny'
 require 'choice'
+require 'edge_coloring_graph'
 require 'colorize'
 
 describe GameSelect do
@@ -192,14 +193,17 @@ describe EdgeColoringGraph do
 9| | | | | | |r|i|c| |
   MAP
 
-  it 'should parse the map' do
-    g = EdgeColoringGraph.new map
-    g[0, 2].should eq true
-    g[1, 3].should eq false
-  end
+  map_arr = map.split("\n")[1..map.length].map {|line| line.split('|')[1..map.length]}
+
+#   it 'should parse the map' do
+#     g = EdgeColoringGraph.new map
+#     g.edge(0, 2).should eq true
+#     g.edge(1, 3).should eq false
+#   end
   it 'should give the color of edges' do
-    g = EdgeColoringGraph.new map
-    g[0, 2].color.should eq 'r'
-    g[2, 3].color.should eq 'g'
+    g = EdgeColoringGraph.new map_arr
+    g.edge(0, 1).should eq ' '
+    g.edge(0, 2).should eq 'r'
+    g.edge(2, 3).should eq 'c'
   end
 end
