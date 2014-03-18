@@ -50,22 +50,31 @@ class Dungeon
   # a map is an edge array defining a graph. Edges have colorings.
   # TODO: make a set of maps and define them elsewhere
   #       write an algorithm to create good maps
-  map = <<-MAP
-  0 1 2 3 4 5 6 7 8 9
-0| | |r| | |b| |g| | |
-1| | | | | | | | | | |
-2|r| | |g| |y| | |b| |
-3| | |g| | | |y| | | |
-4| | | | | | | | | | |
-5|b| |y| | | | | | | |
-6| | | |y| | | |b| |r|
-7|g| | | | | |b| | |y|
-8| | |b| | | | | | |g|
-9| | | | | | |r|y|g| |
-  MAP
+  #
+  DoorDefs = {
+    :r => 'rusty door',
+    :c => 'crack in the wall',
+    :w => 'wooden door',
+    :i => 'iron door'
+  }
 
   # can get here from town, initialize just gives a one time (per visit) message
   def initialize
+
+    map = <<-MAP
+  0 1 2 3 4 5 6 7 8 9
+0| | |r| | |w| |c| | |
+1| | | | |w|c| | | | |
+2|r| | |c| |i| | |w| |
+3| | |c| | | |i| | | |
+4| |w| | | | | | | | |
+5|w|c|i| | | | | | | |
+6| | | |i| | | |w| |r|
+7|g| | | | | |w| | |i|
+8| | |w| | | | | | |c|
+9| | | | | | |r|i|c| |
+  MAP
+    @map = map.split("\n")[1..map.length].map {|line| line.split('|')[1..map.length]}
     puts # formatting
     rand_greet = dice(3)
     rand_greet = "You have entered the dungeon! DUM DUM DUM!!" if rand_greet == 1
@@ -77,8 +86,9 @@ class Dungeon
   def choices
     move = 0
     load_data
+    room_id = 0     # start at room 0
     bread_crumb = 0 # helps track how deep you go into the dungeon
-    until move == "2" and bread_crumb == 0
+    until move == "t" and room_id == 0
       begin
         puts # formatting
         puts bar_top

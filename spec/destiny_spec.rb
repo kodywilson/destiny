@@ -1,6 +1,7 @@
 require 'destiny'
 require 'choice'
 require 'edge_coloring_graph'
+require 'dungeon_map'
 require 'colorize'
 
 describe GameSelect do
@@ -205,5 +206,48 @@ describe EdgeColoringGraph do
     g.edge(0, 1).should eq ' '
     g.edge(0, 2).should eq 'r'
     g.edge(2, 3).should eq 'c'
+  end
+end
+
+describe DungeonMap do
+
+  map = <<-MAP
+  0 1 2 3 4 5 6 7 8 9
+0| | |r| | |w| |c| | |
+1| | | | |w|c| | | | |
+2|r| | |c| |i| | |w| |
+3| | |c| | | |i| | | |
+4| |w| | | | | | | | |
+5|w|c|i| | | | | | | |
+6| | | |i| | | |w| |r|
+7|g| | | | | |w| | |i|
+8| | |w| | | | | | |c|
+9| | | | | | |r|i|c| |
+  MAP
+
+  map_arr = map.split("\n")[1..map.length].map {|line| line.split('|')[1..map.length]}
+
+  it 'should create a Choice' do
+    dungeon_map = DungeonMap.new map_arr
+    location = 0
+    choices = dungeon_map.choices location
+    choices.choices.keys.should =~ [:r, :w, :c]
+  end
+
+  it 'should allow movement through doors' do
+    dungeon_map = DungeonMap.new map_arr
+    location = 0
+    next_location = dungeon_map.door_to location, :r
+    next_location.should be 2
+    futher_down_the_road = dungeon_map.door_to next_location, :w
+    futher_down_the_road.should be 8
+
+  end
+
+  it 'should ignore invalid movements' do
+    dungeon_map = DungeonMap.new map_arr
+    location = 0
+    next_location = dungeon_map.door_to location, :invalid
+    next_location.should be location
   end
 end
