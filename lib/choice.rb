@@ -17,6 +17,10 @@ class Choice
     @choices
   end
 
+  def add(command, msg)
+    @choices[command] = msg
+  end
+
   private
   def put_prompt_msg
     p = []

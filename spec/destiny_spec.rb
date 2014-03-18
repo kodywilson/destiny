@@ -176,6 +176,23 @@ What will you do when you see a ghost?
     choice.should_receive(:gets).and_return("1\n")
     choice.prompt
   end
+
+  it "should allow me to commands" do
+    choice = Choice.new "What will you do when you see a ghost?", {
+      '1' => 'run',
+      '2' => 'hide'
+    }
+    choice.add('b', 'befriend')
+    msg = <<-MSG
+What will you do when you see a ghost?
+#{"[1] ".red}run
+#{"[2] ".red}hide
+#{"[b] ".red}befriend
+    MSG
+    choice.should_receive(:puts).with(msg)
+    choice.should_receive(:gets).and_return("b\n")
+    choice.prompt
+  end
 end
 
 describe EdgeColoringGraph do
