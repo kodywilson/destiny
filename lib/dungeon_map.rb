@@ -15,8 +15,8 @@ class DungeonMap
 
   def door_to current_location, command
     doors = doors_at current_location
-    if doors[command]
-      return doors[command]
+    if doors[command.to_sym]
+      return doors[command.to_sym]
     else
       return current_location
     end
@@ -37,5 +37,13 @@ class DungeonMap
       doors[door.to_sym] = next_room if door != ' '
     end
     doors
+  end
+
+  def to_s
+    rows = []
+    @map.each_with_index do |row, i|
+      rows << "#{i}|#{row.join '|'}"
+    end
+    rows.join "\n"
   end
 end
