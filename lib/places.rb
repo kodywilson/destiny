@@ -2,7 +2,6 @@
 # Town, Tavern, Dungeon and options in each
 require 'choice'
 require 'dungeon_map'
-require 'pry'
 
 class Town
 
