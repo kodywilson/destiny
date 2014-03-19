@@ -1,6 +1,8 @@
 require 'colorize'
 
 class Choice
+  attr_reader :choices
+
   def initialize msg, choices
     @msg = msg
     @choices = choices
@@ -9,6 +11,14 @@ class Choice
   def prompt
     put_prompt_msg
     get_prompt_resp
+  end
+
+  def to_s
+    @choices
+  end
+
+  def add(command, msg)
+    @choices[command] = msg
   end
 
   private
