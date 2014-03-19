@@ -1,6 +1,8 @@
 # This file will contain the various places the player can go
 # Town, Tavern, Dungeon and options in each
 require 'choice'
+require 'dungeon_map'
+require 'pry'
 
 class Town
 
@@ -51,12 +53,6 @@ class Dungeon
   # TODO: make a set of maps and define them elsewhere
   #       write an algorithm to create good maps
   #
-  DoorDefs = {
-    :r => 'rusty door',
-    :c => 'crack in the wall',
-    :w => 'wooden door',
-    :i => 'iron door'
-  }
 
   # can get here from town, initialize just gives a one time (per visit) message
   def initialize
@@ -70,11 +66,12 @@ class Dungeon
 4| |w| | | | | | | | |
 5|w|c|i| | | | | | | |
 6| | | |i| | | |w| |r|
-7|g| | | | | |w| | |i|
+7|c| | | | | |w| | |i|
 8| | |w| | | | | | |c|
 9| | | | | | |r|i|c| |
   MAP
     @map = map.split("\n")[1..map.length].map {|line| line.split('|')[1..map.length]}
+    @dungeon_map = DungeonMap.new @map
     puts # formatting
     rand_greet = dice(3)
     rand_greet = "You have entered the dungeon! DUM DUM DUM!!" if rand_greet == 1
@@ -87,26 +84,19 @@ class Dungeon
     move = 0
     load_data
     room_id = 0     # start at room 0
-    bread_crumb = 0 # helps track how deep you go into the dungeon
     until move == "t" and room_id == 0
-      begin
-        puts # formatting
-        puts bar_top
-        puts stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
-        puts bar_low
-        puts # formatting
-        choice_options = {
-          "1" => "Go deeper into the dungeon.",
-          "2" => "Return to town."
-        }
-        if @player.class.to_s == "Wizard" and
-           @player.spell_buff == false
-          choice_options["3"] = "Conjure Wizard Familiar"
-        end
-        c = Choice.new "Now #{@player.name}, what will you do next?", choice_options
-        move = c.prompt
-        move = "4" if move == "3" and (@player.class.to_s != "Wizard" or @player.spell_buff == true)
-      end while not (move == "1" or move == "2" or move == "3")
+      puts # formatting
+      puts bar_top
+      puts stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
+      puts bar_low
+      puts # formatting
+      c = @dungeon_map.choices room_id
+      c.add('t', 'Go back to town.') if room_id == 0
+      if @player.class.to_s == "Wizard" and
+        @player.spell_buff == false
+        c.add('f', "Conjure Wizard Familar")
+      end
+      move = c.prompt
       # apply food buff
       @player.cur_hp = @player.cur_hp + @player.lvl if @player.buff_food == true
       # prevent food buff from raising current health points above maximum
@@ -115,8 +105,9 @@ class Dungeon
       @player.cur_mana = @player.cur_mana + @player.lvl if @player.buff_drink == true
       # prevent drink buff from raising current mana points above maximum
       @player.cur_mana = @player.mana if @player.cur_mana > @player.mana
-      case
-      when move == "1"
+      new_room_id = @dungeon_map.door_to room_id, move
+      if new_room_id != room_id
+        room_id = new_room_id
         puts # formatting
         rand_msg = dice(3)
         rand_msg = "You walk further into the dark, dank, dirty, dungeon, smirking slightly at your awesome alliteration ability." if rand_msg == 1
@@ -124,30 +115,25 @@ class Dungeon
         rand_msg = "More strange markings, they seem to mean something, but what and who wrote them?" if rand_msg == 3
         puts rand_msg
         puts # formatting
-        bread_crumb = bread_crumb + 1
         random_encounter
-      when move == "2"
-        if bread_crumb <= 1
-          puts # formatting
-          puts "You make it back to town in one piece!"
-          puts # formatting
-          # remove food buffs from player when they leave the dungeon
-          @player.buff_food = false
-          @player.buff_drink = false
-          if @player.class.to_s == "Wizard" and @player.spell_buff == true
-            puts "Drako wishes you well and fades away, ready to help another day."
-            puts #formatting
-            @player.spell_buff = false
-          end
-          save_data
-          return
+      elsif move == "t"  # back to town
+        puts # formatting
+        puts "You make it back to town in one piece!"
+        puts # formatting
+        # remove food buffs from player when they leave the dungeon
+        @player.buff_food = false
+        @player.buff_drink = false
+        if @player.class.to_s == "Wizard" and @player.spell_buff == true
+          puts "Drako wishes you well and fades away, ready to help another day."
+          puts #formatting
+          @player.spell_buff = false
         end
-        bread_crumb = bread_crumb - 1
-        puts # formatting
-        puts "You head back toward town."
-        puts # formatting
-        random_encounter
-      when move == "3"
+        save_data
+        return
+      # wizard familiar
+      elsif move == "f" and
+            @player.class.to_s == "Wizard" and
+            @player.spell_buff == false
         puts # formatting
         puts "#{@player.name} concentrates intently while waving the magic wand and casting the spell..."
         puts # formatting
