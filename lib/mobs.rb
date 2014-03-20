@@ -146,7 +146,7 @@ class Goblin < Mobs
       hp       = 10
       cur_hp   = 10
       xp       = 300
-      coin     = 4
+      coin     = 3
       name     = "Goblin Chief"
     end
     super(str,agi,int,dmg,armor,hp,cur_hp,dodge,mana,cur_mana,xp,lvl,coin,name)
@@ -159,19 +159,28 @@ class Kobold < Mobs
   def initialize(str=12, agi=8, int=8, dmg=5, armor=5, hp=6, cur_hp=6, dodge=10, mana=2, cur_mana=2, xp=150, lvl=1, coin=2, name="Kobold")
     kobold_type = dice(10)
     case
-    when (1..6).include?(kobold_type)
+    when (1..5).include?(kobold_type)
       # no change, you just get the generic kobold
-    when (7..10).include?(kobold_type)
+    when (6..9).include?(kobold_type)
       # this one has double the chance to dodge as a regular kobold
       agi      = 16
       dmg      = 6
       armor    = 6
-      hp       = 8
-      cur_hp   = 8
       dodge    = 20
       xp       = 300
       coin     = 4
       name     = "Kobold Thief"
+    when kobold_type == 10
+      # kobold mini boss!
+      str      = 16
+      agi      = 12
+      dmg      = 8
+      armor    = 8
+      hp       = 10
+      cur_hp   = 10
+      xp       = 400
+      coin     = 5
+      name     = "Kobold Berserker"
     end
     super(str,agi,int,dmg,armor,hp,cur_hp,dodge,mana,cur_mana,xp,lvl,coin,name)
   end
@@ -183,9 +192,9 @@ class Skeleton < Mobs
   def initialize(str=12, agi=10, int=8, dmg=5, armor=6, hp=8, cur_hp=8, dodge=5, mana=0, cur_mana=0, xp=200, lvl=1, coin=3, name="Skeleton")
     skeleton_type = dice(10)
     case
-    when (1..7).include?(skeleton_type)
+    when (1..5).include?(skeleton_type)
       # no change, you just get the generic skeleton
-    when (8..10).include?(skeleton_type)
+    when (6..9).include?(skeleton_type)
       # this feller is considerably tougher
       str      = 16
       dmg      = 6
@@ -193,8 +202,20 @@ class Skeleton < Mobs
       hp       = 10
       cur_hp   = 10
       xp       = 300
-      coin     = 5
+      coin     = 3
       name     = "Skeletal Knight"
+    when skeleton_type == 10
+      # skeleton mini boss!
+      str      = 14
+      agi      = 14
+      dmg      = 8
+      armor    = 8
+      hp       = 10
+      cur_hp   = 10
+      dodge    = 10
+      xp       = 400
+      coin     = 5
+      name     = "Skeleton of Geoff"
     end
     super(str,agi,int,dmg,armor,hp,cur_hp,dodge,mana,cur_mana,xp,lvl,coin,name)
   end
