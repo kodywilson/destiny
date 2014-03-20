@@ -10,5 +10,5 @@ Gem::Specification.new do |s|
   s.license      = 'MIT'
   s.files        = ["lib/destiny.rb", "lib/mobs.rb", "lib/places.rb", "lib/game_mechanics.rb", "lib/choice.rb" , "lib/edge_coloring_graph.rb", "lib/dungeon_map.rb"]
   s.executables  = ["destiny"]
-  s.add_runtime_dependency 'colorize' 
+  s.add_runtime_dependency 'colorize', '~> 0.7.0', '>= 0.7.0'
 end
