@@ -19,9 +19,9 @@ class Town
       begin
         load_data
         puts # formatting
-        puts bar_top
-        puts stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
-        puts bar_low
+        puts bar_top.yellow
+        puts stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana).cyan
+        puts bar_low.yellow
         puts # formatting
         c = Choice.new "Please choose where you will head next:",
           {

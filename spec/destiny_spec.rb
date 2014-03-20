@@ -104,11 +104,11 @@ describe GiantRat do
   end
 
   it "should set name to Giant Rat or ROUS" do
-    ["Giant Rat", "ROUS"].include?(GiantRat.new.name).should eq true
+    ["Giant Rat", "ROUS", "Nuck Chorris"].include?(GiantRat.new.name).should eq true
   end
 
   it "should alter stats based on sub type generated" do
-    [8,10].include?(GiantRat.new.hp).should eq true
+    [8,10,12].include?(GiantRat.new.hp).should eq true
   end
 
 end
@@ -120,11 +120,11 @@ describe Goblin do
   end
 
   it "should set name to Goblin or Goblin Warrior" do
-    ["Goblin", "Goblin Warrior"].include?(Goblin.new.name).should eq true
+    ["Goblin", "Goblin Warrior", "Goblin Chief"].include?(Goblin.new.name).should eq true
   end
 
   it "should alter stats based on sub type generated" do
-    [6,8].include?(Goblin.new.hp).should eq true
+    [6,8,10].include?(Goblin.new.hp).should eq true
   end
 
 end
@@ -136,11 +136,11 @@ describe Kobold do
   end
 
   it "should set name to Kobold or Kobold Thief" do
-    ["Kobold", "Kobold Thief"].include?(Kobold.new.name).should eq true
+    ["Kobold", "Kobold Thief", "Kobold Berserker"].include?(Kobold.new.name).should eq true
   end
 
   it "should alter stats based on sub type generated" do
-    [6,8].include?(Kobold.new.hp).should eq true
+    [6,10].include?(Kobold.new.hp).should eq true
   end
 
 end
@@ -152,7 +152,7 @@ describe Skeleton do
   end
 
   it "should set name to Skeleton or Skeletal Knight" do
-    ["Skeleton", "Skeletal Knight"].include?(Skeleton.new.name).should eq true
+    ["Skeleton", "Skeletal Knight", "Skeleton of Geoff"].include?(Skeleton.new.name).should eq true
   end
 
   it "should alter stats based on sub type generated" do
@@ -169,8 +169,8 @@ describe Choice do
     }
     msg = <<-MSG
 What will you do when you see a ghost?
-#{"[1] ".red}run
-#{"[2] ".red}hide
+#{"[1] ".yellow}run
+#{"[2] ".yellow}hide
     MSG
     choice.should_receive(:puts).with(msg)
     choice.should_receive(:gets).and_return("1\n")
@@ -185,9 +185,9 @@ What will you do when you see a ghost?
     choice.add('b', 'befriend')
     msg = <<-MSG
 What will you do when you see a ghost?
-#{"[1] ".red}run
-#{"[2] ".red}hide
-#{"[b] ".red}befriend
+#{"[1] ".yellow}run
+#{"[2] ".yellow}hide
+#{"[b] ".yellow}befriend
     MSG
     choice.should_receive(:puts).with(msg)
     choice.should_receive(:gets).and_return("b\n")

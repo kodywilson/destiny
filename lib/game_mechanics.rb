@@ -96,11 +96,11 @@ module GameMechanics
   end
 
   def bar_top
-    "_"*27 + " STATS " + "_"*27
+    "_"*27 + " " + "STATS" + " " + "_"*27
   end
 
   def stat_bar name, xp, lvl, coin, cur_hp, cur_mana
-    "  Name: #{name} | XP: #{xp} | Lvl: #{lvl} | Coin: #{coin} | HP: #{cur_hp} | Mana: #{cur_mana}"
+    "  Name: " + "#{name}" + " | XP: #{xp} | Lvl: #{lvl} | Coin: #{coin} | HP: #{cur_hp} | Mana: #{cur_mana}"
   end
 
   def bar_low
@@ -244,7 +244,7 @@ module GameMechanics
           else
             dmg_taken = dice(@bad_guy.dmg) - @player.armor/4
             if @player.class.to_s == "Wizard" and @player.spell_buff == true and dmg_taken > 1
-              draco_helps = @player.lvl
+              draco_helps = @player.lvl + @player.lvl/2 # Trying a bump in mitigation as Wizard is squishy!
               dmg_taken = dmg_taken - draco_helps
               puts "Draco helps shield you absorbing some of the potential damage."
               puts # formatting
