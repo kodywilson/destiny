@@ -144,7 +144,7 @@ module GameMechanics
         @heal = false
         puts # formatting
         puts bar_low + "--"
-        puts " #{@player.name} - HP: #{@player.cur_hp} - Mana: #{@player.cur_mana} | - VS - | #{@bad_guy.name} - HP: #{@bad_guy.cur_hp} - Mana: #{@bad_guy.cur_mana}"
+        puts " #{@player.name} - HP: #{@player.cur_hp} - Mana: #{@player.cur_mana} |".green + " - VS - " + "| #{@bad_guy.name} - HP: #{@bad_guy.cur_hp} - Mana: #{@bad_guy.cur_mana}".red
         puts bar_low + "--"
         puts # formatting
         choice_opts = {

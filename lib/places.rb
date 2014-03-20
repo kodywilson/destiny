@@ -20,7 +20,7 @@ class Town
         load_data
         puts # formatting
         puts bar_top.yellow
-        puts stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana).cyan
+        puts stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
         puts bar_low.yellow
         puts # formatting
         c = Choice.new "Please choose where you will head next:",
@@ -85,9 +85,9 @@ class Dungeon
     room_id = 0     # start at room 0
     until move == "t" and room_id == 0
       puts # formatting
-      puts bar_top
+      puts bar_top.yellow
       puts stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
-      puts bar_low
+      puts bar_low.yellow
       puts # formatting
       c = @dungeon_map.choices room_id
       c.add('t', 'Go back to town.') if room_id == 0
@@ -165,9 +165,9 @@ class Tavern
     until move == "4"
       begin
         puts # formatting
-        puts bar_top
+        puts bar_top.yellow
         puts stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
-        puts bar_low
+        puts bar_low.yellow
         puts # formatting
         room_cost = @player.lvl*3
         nourish_cost = @player.lvl*2
