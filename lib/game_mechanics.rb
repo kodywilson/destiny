@@ -31,6 +31,12 @@ module GameMechanics
       @player.lvl = 6
     when (15001..19000).include?(@player.xp)
       @player.lvl = 7
+    when (19001..24000).include?(@player.xp)
+      @player.lvl = 8
+    when (24001..29000).include?(@player.xp)
+      @player.lvl = 9
+    when @player.xp > 29000
+      @player.lvl = 10
     end
     save_info = {
       role:       @player.class,
@@ -107,11 +113,20 @@ module GameMechanics
 
   def player_croaks
     puts # formatting
+    if @player.class.to_s == "Wizard" and @player.spell_buff == true
+      puts "A single tear falls from Draco as he fades away..."
+      puts #formatting
+      @player.spell_buff = false
+    end
     puts "It happens to the best of us #{@player.name}."
     puts "Fortunately for you, the game of Destiny never ends."
     puts "The game will exit now and you can restart in town."
     puts # formatting
     puts "Better luck next time, eh?"
+    @player.buff_food = false
+    @player.buff_drink = false
+    @player.cur_hp = @player.hp/2
+    save_data
     exit
   end
 
@@ -178,7 +193,7 @@ module GameMechanics
             end
             @heal_amount = dice(2)*@player.lvl + heal_bonus + 1 # testing with the +1, what I am going for here
                                                                 # is to balance the heal with their lower damage and hp
-            puts "Praying intently, you add #{@heal_amount} health points as you prepare to strike."
+            puts "Praying intently, you add " + "#{@heal_amount}".green + " health points as you prepare to strike."
             @player.cur_hp = @player.cur_hp + @heal_amount
             puts "#{@player.name}, any health points above your normal maximum will fade after combat." if @player.cur_hp > @player.hp
             puts # formatting
@@ -203,7 +218,7 @@ module GameMechanics
           @dmg_dlt = @dmg_dlt - @bad_guy.armor/4
           @dmg_dlt = 0 if @dmg_dlt < 1
           puts #formatting
-          puts "You deal #{@dmg_dlt} damage to the #{@bad_guy.name}." unless @dmg_dlt < 1
+          puts "You deal " + "#{@dmg_dlt}".green + " damage to the #{@bad_guy.name}." unless @dmg_dlt < 1
           puts # formatting
           @bad_guy.cur_hp = @bad_guy.cur_hp - @dmg_dlt
         end
@@ -237,7 +252,7 @@ module GameMechanics
             dmg_taken = 0 if dmg_taken < 1
             @player.cur_hp = @player.cur_hp - dmg_taken
             if dmg_taken > 0
-              puts "#{@bad_guy.name} hits YOU for #{dmg_taken} damage!"
+              puts "#{@bad_guy.name} hits YOU for " + "#{dmg_taken}".red + " damage!"
               puts "OUCH!"
             else
               puts "You deflect the blow and take no damage."
@@ -278,7 +293,7 @@ module GameMechanics
             dmg_taken = dice(@bad_guy.dmg) - @player.armor/4
             dmg_taken = 0 if dmg_taken < 1
             @player.cur_hp = @player.cur_hp - dmg_taken
-            puts "#{@bad_guy.name} hits YOU for #{dmg_taken} damage!" unless dmg_taken < 1
+            puts "#{@bad_guy.name} hits YOU for " + "#{dmg_taken}".red + " damage!" unless dmg_taken < 1
             puts "OUCH!" unless dmg_taken < 1
           end
           puts #formatting

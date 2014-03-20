@@ -91,18 +91,28 @@ class GiantRat < Mobs
   def initialize(str=12, agi=10, int=4, dmg=5, armor=6, hp=8, cur_hp=8, dodge=5, mana=0, cur_mana=0, xp=150, lvl=1, coin=1, name="Giant Rat")
     rat_type = dice(10)
     case
-    when (1..8).include?(rat_type)
+    when (1..5).include?(rat_type)
       # no change, you just get the generic giant rat
-    when (9..10).include?(rat_type)
+    when (6..9).include?(rat_type)
       # this feller is much harder to defeat
-      str      = 16
-      dmg      = 8
+      str      = 14
+      dmg      = 6
       hp       = 10
       cur_hp   = 10
       dodge    = 10
-      xp       = 400
-      coin     = 3
+      xp       = 250
+      coin     = 2
       name     = "ROUS"
+    when rat_type == 10
+      # Giant rat mini boss!
+      str      = 16
+      dmg      = 8
+      hp       = 12
+      cur_hp   = 12
+      dodge    = 15
+      xp       = 400
+      coin     = 4
+      name     = "Nuck Chorris"
     end
     super(str,agi,int,dmg,armor,hp,cur_hp,dodge,mana,cur_mana,xp,lvl,coin,name)
   end
@@ -115,9 +125,9 @@ class Goblin < Mobs
     # Should probably create a method that does the below
     goblin_type = dice(10)
     case
-    when (1..6).include?(goblin_type)
+    when (1..5).include?(goblin_type)
       # no change, you just get the generic goblin
-    when (7..10).include?(goblin_type)
+    when (6..9).include?(goblin_type)
       # this feller is stronger, but less nimble
       str      = 16
       dmg      = 6
@@ -128,6 +138,16 @@ class Goblin < Mobs
       xp       = 200
       coin     = 2
       name     = "Goblin Warrior"
+    when goblin_type == 10
+      # Mini boss goblin!
+      str      = 16
+      dmg      = 8
+      armor    = 10
+      hp       = 10
+      cur_hp   = 10
+      xp       = 300
+      coin     = 4
+      name     = "Goblin Chief"
     end
     super(str,agi,int,dmg,armor,hp,cur_hp,dodge,mana,cur_mana,xp,lvl,coin,name)
   end

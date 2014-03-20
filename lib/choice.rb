@@ -26,7 +26,7 @@ class Choice
     p = []
     p << @msg
     @choices.each do |key, description|
-      p << "[#{key}] ".red +  description
+      p << "[#{key}] ".yellow +  description
     end
     puts "#{p.join("\n")}\n"
   end
