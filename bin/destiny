@@ -12,7 +12,7 @@ puts "|" + " "*53 + "|"
 puts " " + "-"*53
 puts # formatting
 puts # formatting
-puts "Selectable options will normally be enclosed in " + "[]".yellow "'s."
+puts "Selectable options will normally be enclosed in " + "[]".yellow + "'s."
 puts # formatting
 if File.exists?('../lib/save_game.json')
   puts "Would you like to start a new game?"

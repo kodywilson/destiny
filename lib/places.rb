@@ -169,8 +169,8 @@ class Tavern
         puts stat_bar(@player.name, @player.xp, @player.lvl, @player.coin, @player.cur_hp, @player.cur_mana)
         puts bar_low.yellow
         puts # formatting
-        room_cost = @player.lvl*3
-        nourish_cost = @player.lvl*2
+        room_cost = @player.lvl*2
+        nourish_cost = @player.lvl
         c = Choice.new "What would you like to do in the tavern, #{@player.name}?",
           {
             "1" => "Buy some food.    | Cost: #{nourish_cost} coins.",
@@ -182,7 +182,7 @@ class Tavern
       end while not (move == "1" or move == "2" or move == "3" or move == "4")
       case
       when move == "1"
-        if @player.coin >= @player.lvl*2
+        if @player.coin >= @player.lvl and @player.buff_food != true
           @player.buff_food = true
           puts # formatting
           puts "You find a seat at an open table and the waiter approaches to take your order."
@@ -191,14 +191,17 @@ class Tavern
           puts "health as you travel in the dungeon."
           puts # formatting
           puts "You order and enjoy a delicious meal, #{@player.name}, you really do feel swell!"
-          @player.coin = @player.coin - @player.lvl*2
+          @player.coin = @player.coin - @player.lvl
           save_data
+        elsif @player.buff_food == true
+          puts #formatting
+          puts "You couldn't possibly eat anymore."
         else
           puts # formatting
           puts "You can't afford a meal! Go to the dungeon and earn some money!"
         end
       when move == "2"
-        if @player.coin >= @player.lvl*2
+        if @player.coin >= @player.lvl and @player.buff_drink != true
           @player.buff_drink = true
           puts # formatting
           puts "You sally up to the bar and the barkeep approaches to take your order."
@@ -207,23 +210,29 @@ class Tavern
           puts "mana as you travel in the dungeon."
           puts # formatting
           puts "You swirl the wine, sniff, then take a sip, #{@player.name}, you really do feel superior!"
-          @player.coin = @player.coin - @player.lvl*2
+          @player.coin = @player.coin - @player.lvl
           save_data
+        elsif @player.buff_drink == true
+          puts #formatting
+          puts "You couldn't possibly drink anymore."
         else
           puts # formatting
           puts "You can't afford wine, you churl! Go to the dungeon and earn some money!"
         end
       when move == "3"
-        if @player.coin >= @player.lvl*3
+        if @player.coin >= @player.lvl*2 and (@player.cur_hp != @player.hp or @player.cur_mana != @player.mana)
           health = @player.cur_hp
           mana   = @player.cur_mana
-          @player.coin = @player.coin - @player.lvl*3
+          @player.coin = @player.coin - @player.lvl*2
           restore_player
           health = @player.cur_hp - health
           mana   = @player.cur_mana - mana
           puts # formatting
           puts "You pay for a small room and get a good night of rest."
           puts "Resting has restored #{health} health points and #{mana} points of mana."
+        elsif (@player.cur_hp == @player.hp and @player.cur_mana == @player.mana)
+          puts # formatting
+          puts "You don't really need to rest, get out there and make your own discoveries!"
         else
           puts # formatting
           puts "You can't afford a room! Hit the dungeon and earn some money!"
