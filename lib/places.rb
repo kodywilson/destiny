@@ -69,8 +69,22 @@ class Dungeon
 8| | |w| | | | | | |c|
 9| | | | | | |r|i|c| |
   MAP
-    @map = map.split("\n")[1..map.length].map {|line| line.split('|')[1..map.length]}
-    @dungeon_map = DungeonMap.new @map
+    map_arr = map.split("\n")[1..map.length].map {|line| line.split('|')[1..map.length]}
+
+  dungeon_rooms = [
+    {:msg => 'You see scant sunlight lighting emanating from the entrance.'},
+    {:msg => 'You hear rats feet scampering across broken glass.'},
+    {:msg => 'Fresh air mixes with foul as your torch flickers...'},
+    {:msg => 'You see a wooden coffin locked with a heavy chain.'},
+    {:msg => 'The smell of rotting flesh fills you lungs.'},
+    {:msg => 'A howl of wind passes over you and your torch flickers.'},
+    {:msg => 'You notice strange markings on the walls. '},
+    {:msg => 'Your torch flickers briefly, and you hear the sound of water.'},
+    {:msg => 'More strange markings, they seem to mean something, but what and who wrote them?'},
+    {:msg => 'A locked chest sits in the corner.'}
+  ]
+
+    @dungeon_map = DungeonMap.new map_arr, dungeon_rooms
     puts # formatting
     rand_greet = dice(3)
     rand_greet = "You have entered the dungeon! DUM DUM DUM!!" if rand_greet == 1
@@ -105,14 +119,10 @@ class Dungeon
       # prevent drink buff from raising current mana points above maximum
       @player.cur_mana = @player.mana if @player.cur_mana > @player.mana
       new_room_id = @dungeon_map.door_to room_id, move
-      if new_room_id != room_id
+      if new_room_id != room_id  # This means we have moved to a new room.
         room_id = new_room_id
         puts # formatting
-        rand_msg = dice(3)
-        rand_msg = "You walk further into the dark, dank, dirty, dungeon, smirking slightly at your awesome alliteration ability." if rand_msg == 1
-        rand_msg = "You feel a slight draft and your torch flickers briefly..." if rand_msg == 2
-        rand_msg = "More strange markings, they seem to mean something, but what and who wrote them?" if rand_msg == 3
-        puts rand_msg
+        puts @dungeon_map.room(room_id)[:msg].green
         puts # formatting
         random_encounter
       elsif move == "t"  # back to town
