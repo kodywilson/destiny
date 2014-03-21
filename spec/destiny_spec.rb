@@ -244,15 +244,28 @@ describe DungeonMap do
 
   map_arr = map.split("\n")[1..map.length].map {|line| line.split('|')[1..map.length]}
 
+  dungeon_rooms = [
+    {:msg => 'You have entered the dungeon! DUM DUM DUM!!'},
+    {:msg => 'You hear rats feet scampering across broken glass.'},
+    {:msg => 'You feel a slight draft and your torch flickers briefly...'},
+    {:msg => 'You see a wooden coffin locked with a heavy chain.'},
+    {:msg => 'The smell of rotting flesh fills you lungs.'},
+    {:msg => 'You feel a slight draft and your torch flickers briefly...'},
+    {:msg => 'You notice strange markings on the walls. '},
+    {:msg => 'You feel a slight draft and your torch flickers briefly...'},
+    {:msg => 'More strange markings, they seem to mean something, but what and who wrote them?'},
+    {:msg => 'A locked chest sits in the corner.'}
+  ]
+
   it 'should create a Choice' do
-    dungeon_map = DungeonMap.new map_arr
+    dungeon_map = DungeonMap.new map_arr, dungeon_rooms
     location = 0
     choices = dungeon_map.choices location
     choices.choices.keys.should =~ [:r, :w, :c]
   end
 
   it 'should allow movement through doors' do
-    dungeon_map = DungeonMap.new map_arr
+    dungeon_map = DungeonMap.new map_arr, dungeon_rooms
     location = 0
     next_location = dungeon_map.door_to location, :r
     next_location.should be 2
@@ -262,9 +275,15 @@ describe DungeonMap do
   end
 
   it 'should ignore invalid movements' do
-    dungeon_map = DungeonMap.new map_arr
+    dungeon_map = DungeonMap.new map_arr, dungeon_rooms
     location = 0
     next_location = dungeon_map.door_to location, :invalid
     next_location.should be location
+  end
+
+  it 'should give me a message for each room' do
+    dungeon_map = DungeonMap.new map_arr, dungeon_rooms
+    dungeon_map.room(0)[:msg].should eq 'You have entered the dungeon! DUM DUM DUM!!'
+    dungeon_map.room(9)[:msg].should eq 'A locked chest sits in the corner.'
   end
 end

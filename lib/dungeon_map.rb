@@ -9,8 +9,9 @@ DoorNames = {
 }
 
 class DungeonMap
-  def initialize map
+  def initialize map, rooms
     @map = map
+    @rooms = rooms
   end
 
   def door_to current_location, command
@@ -37,6 +38,10 @@ class DungeonMap
       doors[door.to_sym] = next_room if door != ' '
     end
     doors
+  end
+
+  def room location
+    @rooms[location]
   end
 
   def to_s
