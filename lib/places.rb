@@ -57,17 +57,23 @@ class Dungeon
   def initialize
 
     map = <<-MAP
-  0 1 2 3 4 5 6 7 8 9
-0| | |r| | |w| |c| | |
-1| | | | |w|c| | | | |
-2|r| | |c| |i| | |w| |
-3| | |c| | | |i| | | |
-4| |w| | | | | | | | |
-5|w|c|i| | | | | | | |
-6| | | |i| | | |w| |r|
-7|c| | | | | |w| | |i|
-8| | |w| | | | | | |c|
-9| | | | | | |r|i|c| |
+   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
+0 | | |r| | |w| |c| | | | | | | | |
+1 | | | | |w|c| | | | | | | | | | |
+2 |r| | |c| |i| | |w| | | | | | | |
+3 | | |c| | | |i| | | | | | | | | |
+4 | |w| | | | | | | | | | | | | | |
+5 |w|c|i| | | | | | | | | | | | | |
+6 | | | |i| | | |w| |r| | | | | | |
+7 |c| | | | | |w| | |i| | | | | | |
+8 | | |w| | | | | | |c| | | | | | |
+9 | | | | | | |r|i|c| |d| | | | | |
+10| | | | | | | | | |u| |w| | | | |
+11| | | | | | | | | | |w| |i| | | |
+12| | | | | | | | | | | |i| |c|w| |
+13| | | | | | | | | | | | |c| | | |
+14| | | | | | | | | | | | |w| | |i|
+15| | | | | | | | | | | | | | |i| |
   MAP
     map_arr = map.split("\n")[1..map.length].map {|line| line.split('|')[1..map.length]}
 
@@ -81,7 +87,13 @@ class Dungeon
     {:msg => 'You notice strange markings on the walls. '},
     {:msg => 'Your torch flickers briefly, and you hear the sound of water.'},
     {:msg => 'More strange markings, they seem to mean something, but what and who wrote them?'},
-    {:msg => 'A locked chest sits in the corner.'}
+    {:msg => 'A locked chest sits in the corner.'},
+    {:msg => 'Something rattles under the stairway.'},  # room 10
+    {:msg => 'A skeleton lies in the corner.'},  # room 11
+    {:msg => 'You hear the sound of water dripping.'},  # room 12
+    {:msg => 'A breeze causes your torch to flicker.'},  # room 13
+    {:msg => 'You smell a foul stench.'},  # room 14
+    {:msg => 'Fear grips your heart as you step into this room.'},  # room 15
   ]
 
     @dungeon_map = DungeonMap.new map_arr, dungeon_rooms

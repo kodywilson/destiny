@@ -5,7 +5,9 @@ DoorNames = {
   :w => 'wooden door',
   :i => 'iron door',
   :c => 'crack in the wall',
-  :r => 'rusty door'
+  :r => 'rusty door',
+  :u => 'upstairs',
+  :d => 'downstairs'
 }
 
 class DungeonMap
@@ -27,7 +29,11 @@ class DungeonMap
     doors = doors_at location
     door_choices = {}
     doors.keys.each do |command|
-      door_choices[command.to_sym] = "Go through the #{DoorNames[command]}."
+      if command != :u and command != :d
+        door_choices[command.to_sym] = "Go through the #{DoorNames[command]}."
+      else  # for upstairs/downstairs
+        door_choices[command.to_sym] = "Go #{DoorNames[command]}."
+      end
     end
     Choice.new 'Where will you go next?', door_choices
   end
