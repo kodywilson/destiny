@@ -7,7 +7,7 @@ require 'colorize'
 describe GameSelect do
 
   it "should ask if the player wants a new game and respond appropriately" do
-    GameSelect.new("no").outcome.should eq "Loading the existing game."
+    expect(GameSelect.new("no").outcome).to eq("Loading the existing game.")
   end
 
 end
@@ -15,11 +15,11 @@ end
 describe GameMechanics do
 
   it "should create a top divider bar" do
-    bar_top.should eq "___________________________ STATS ___________________________"
+    expect(bar_top).to eq("___________________________ STATS ___________________________")
   end
 
   it "should return the player's stats" do
-    stat_bar("Bagginszz", 50, 1, 3, 4, 24).should eq "  Name: Bagginszz | XP: 50 | Lvl: 1 | Coin: 3 | HP: 4 | Mana: 24"
+    expect(stat_bar("Bagginszz", 50, 1, 3, 4, 24)).to eq("  Name: Bagginszz | XP: 50 | Lvl: 1 | Coin: 3 | HP: 4 | Mana: 24")
   end
 
   it "should create a lower divider bar" do
