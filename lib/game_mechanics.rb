@@ -9,7 +9,7 @@ module GameMechanics
   SAVES = File.join(APP_PATH, "saves")
   Dir.mkdir(SAVES) unless File.exist?(SAVES)
 
-  @@save_file = File.join(APP_PATH, "save_game.json")
+  @@save_file = File.join(SAVES, "save_game.json")
 
   def prompt
     print ">> "
